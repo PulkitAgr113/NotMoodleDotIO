@@ -1,0 +1,22 @@
+<!-- templates/registration/login.html -->
+{% extends 'login-reg-base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<br>
+<br>
+<br>
+<div class="container-sm">
+
+<h2>Login to Doodled</h2>
+<br>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary" role="button">Log In</button>
+  
+</form>
+
+</div>
+{% endblock %}

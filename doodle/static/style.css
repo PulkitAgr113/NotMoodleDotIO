@@ -1,0 +1,36 @@
+h1 {
+	margin: 1em 0 0.5em 0;
+	color: #343434;
+	font-weight: normal;
+	font-family: 'monaco', monospace;  
+	font-size: 54px;
+	line-height: 5px;
+
+	text-shadow: 0 2px white, 0 3px #777;
+}
+
+h2 {
+    font-family: 'monaco', monospace;
+    font-size: 36px;
+}
+
+h3 {
+    color:red;
+    font-family: monospace;
+}
+
+p {
+    font-family: 'monaco', monospace;
+}
+
+.button {
+    align-self: center;
+    font-family: 20px 'monaco', monospace;
+    text-decoration: none;
+    background-color:forestgreen;
+    color:white;
+    padding: 16px 30px 16px 30px;
+    border-radius: 8px;
+    margin-right: 6px;
+    margin-left: 6px;
+  }
