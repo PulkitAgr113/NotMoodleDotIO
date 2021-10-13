@@ -17,6 +17,14 @@ const handleAlert = (msg, type) => {
     }, 5000);
 }
 
+const roomCode = 10 ;
+const userName = document.getElementById('username').value
+
+socket.emit('joinDetails', {
+    'roomCode': roomCode ,
+    'userName': userName ,
+})
+
 socket.on('welcome', msg=>{
     handleAlert(msg, 'primary')
 })
@@ -26,12 +34,28 @@ socket.on('leave', msg=>{
 })
 
 sendBtn.addEventListener('click',()=>{
-    // messageInput.value = ""
+   
     const message = messageInput.value
+    if(messageInput.value == "") return
+    messageInput.value = ""
     console.log(message)
-    socket.emit('message', message)
+    msg = {
+        'message':message ,
+        'username':userName ,
+    }
+    messageBox.innerHTML = `<div class="row justify-content-end" style="margin-bottom: 10px;">
+                            <div class="col-4 msg-self">
+                            <b>${userName}</b><br>
+                            ${message}
+                            </div></div>` + messageBox.innerHTML 
+    socket.emit('message', msg)
 })
 
 socket.on('messageToClients', msg=>{
-    messageBox.innerHTML += `<b>${msg}</b><br>` 
+    // console.log('msg from server'+msg)
+    messageBox.innerHTML = `<div class="row justify-content-start" style="margin-bottom: 10px;">
+                            <div class="msg-other">
+                            <b>${msg['username']}</b><br>
+                            ${msg['message']}
+                            </div></div>` + messageBox.innerHTML
 })

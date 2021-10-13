@@ -1,3 +1,5 @@
+{% load static %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -7,11 +9,13 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'style.css' %}"> -->
 
     <title>chat proj | {% block title %}{% endblock title %}</title>
   </head>
   <body>
-    <div class="container mt-3 mb-3">
+    <div class="container-fluid mt-2">
         {% block content %}
         {% endblock content %}
     </div>

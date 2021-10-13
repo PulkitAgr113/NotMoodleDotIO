@@ -1,8 +1,12 @@
+body {
+    font-family: 'monaco', monospace;  
+}
+
 h1 {
 	margin: 1em 0 0.5em 0;
 	color: #343434;
 	font-weight: normal;
-	font-family: 'monaco', monospace;  
+	
 	font-size: 54px;
 	line-height: 5px;
 
@@ -23,14 +27,19 @@ p {
     font-family: 'monaco', monospace;
 }
 
-.button {
-    align-self: center;
-    font-family: 20px 'monaco', monospace;
-    text-decoration: none;
-    background-color:forestgreen;
-    color:white;
-    padding: 16px 30px 16px 30px;
-    border-radius: 8px;
-    margin-right: 6px;
-    margin-left: 6px;
-  }
+.msg-self{
+    background-color: #D0F0C0;
+    width: fit-content;
+    padding: 4px 8px 4px 8px;
+    border-radius: 5px;
+    float: right;
+}
+
+.msg-other{
+    background-color: #FFFAF1;
+    width: fit-content;
+    padding: 4px 8px 4px 8px;
+    align-items: left ;
+    border-radius: 5px;
+    float: left;
+}

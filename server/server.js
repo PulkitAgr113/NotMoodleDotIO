@@ -10,21 +10,24 @@ const io = socketio(server, {
     }
 })
 
-const room = 'testRoom'
+var room = 'testRoom'
 
 io.on('connection', socket=> {
-    console.log('connected')
-    console.log(socket.id)
+    // console.log('connected')
+    // console.log(socket.id)
 
-    socket.join(room)
+    socket.on('joinDetails', details=>{
+        room = details['roomCode']
+        socket.join(details['roomCode'])
 
-    // Broadcast welcome to other users. 
-    socket.broadcast.emit('welcome', 'A new user entered the chat')
+        // Broadcast welcome to other users. 
+        socket.broadcast.to(room).emit('welcome', details['userName']+' entered the chat')
+    })
 
     // Enter message in chat
     socket.on('message', msg=>{
         console.log(msg)
-        io.to(room).emit('messageToClients', msg)
+        socket.broadcast.to(room).emit('messageToClients', msg)
     })
 
     // Broadcast leave message .

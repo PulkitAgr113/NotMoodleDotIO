@@ -3,7 +3,8 @@ from doodle.forms import RegistrationForm
 from django.contrib.auth.forms import UserCreationForm
 
 def main_view(request):
-    return render(request, 'main.html', {})
+    user = request.user
+    return render(request, 'main.html', {'username':user.username})
 
 def register(request):
     if request.method == 'POST':

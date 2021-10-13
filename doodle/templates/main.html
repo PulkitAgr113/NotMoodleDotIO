@@ -6,12 +6,30 @@ main page
 {% endblock title %}
 
 {% block content %}
+    <input type="hidden" value={{username}} id="username">
+    
+    <div class="row">
+    <div class="col-9 col-xl-9">
+        <h1>abcd</h1>
+        
+    </div>
+    <div class="col-3 col-xl-3">
 
-    <div id="alert-box"></div>
-    <div id="messages-box"></div>
+        <!-- Content here -->
+        <div id="alert-box"></div>
+        <div class="container" id="messages-box" style="overflow-y:scroll; height:800px; display: flex; flex-direction: column-reverse;">
+            
+        </div>
+        <div class="row">
+            <div class="col">
+                <input type="text" id="message-input" class="form-control" placeholder="your message">
+                <button class="btn btn-primary mt-2" id="send-btn">send</button>
+            </div>
+        </div>
+        
 
-    <input type="text" id="message-input" class="form-control" placeholder="your message">
-    <button class="btn btn-primary mt-2" id="send-btn">send</button>
+    </div>
+    </div>
 
 {% endblock content %}
 
