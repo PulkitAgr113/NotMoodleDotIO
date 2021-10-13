@@ -30,6 +30,11 @@ io.on('connection', socket=> {
         socket.broadcast.to(room).emit('messageToClients', msg)
     })
 
+    // Broadcast data about the canvas
+    socket.on('drawing', (diagram)=>{
+        socket.broadcast.emit('drawing', diagram);
+    })
+
     // Broadcast leave message .
     socket.on('disconnect',()=>{
         io.to(room).emit('leave', 'user left the chat')
