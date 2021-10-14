@@ -66,7 +66,7 @@ socket.on('messageToClients', msg=>{
 const canvas = document.getElementsByClassName('whiteboard')[0];
 const colors = document.getElementsByClassName('color');
 const context = canvas.getContext('2d');
-
+var rect = canvas.getBoundingClientRect();
 // Stores current brush color
 var current = {
     color: 'black'
@@ -96,8 +96,8 @@ onResize();
 function drawLine(x0, y0, x1, y1, color, emit){
     // Drawing a line
     context.beginPath();
-    context.moveTo(x0, y0);
-    context.lineTo(x1, y1);
+    context.moveTo(x0-rect.left, y0-rect.top);
+    context.lineTo(x1-rect.left, y1-rect.top);
     context.strokeStyle = color;
     context.lineWidth = 2;
     context.stroke();
@@ -166,6 +166,7 @@ function throttle(callback, delay) {
 
 // Making the canvas fill its encloser
 function onResize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth*0.50;
+    canvas.height = window.innerWidth*0.50;
+    rect = canvas.getBoundingClientRect();
 }
