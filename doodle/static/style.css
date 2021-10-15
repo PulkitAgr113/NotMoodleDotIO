@@ -67,3 +67,16 @@ p {
     bottom: 0;
     top: 0;
 }
+
+.chatbox {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 80vh;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+html,body {
+    height: 100%;
+}
+  
