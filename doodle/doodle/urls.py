@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import main_view
+from .views import main_view_1, main_view_2
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lobby/', main_view, name='main'),
+    path('lobby/', main_view_1, name='main1'),
+    path('lobby/<str:room_id>/', main_view_2, name='main2'),
     path('menu/', views.menu, name='menu'),
     path('accounts/', include('django.contrib.auth.urls'), name='login'),
     path('register/', views.register, name='register'),

@@ -7,11 +7,14 @@ main page
 
 {% block content %}
     <input type="hidden" value={{username}} id="username">
+    <input type="hidden" value={{roomid}} id="roomid">
     
     <div class="row h-100">
 
         <div class="col-3 col-xl-3">
-            abcd
+            <h2>Room-{{roomid}}</h2>
+            <div class="container" id='roomdetails'></div>
+            <div id="alert-box"></div>
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
@@ -26,7 +29,6 @@ main page
         
         <div class="col-3 col-xl-3">
             <!-- Content here -->
-            <div id="alert-box"></div>
             <div class="container chatbox" id="messages-box">
                 
             </div>

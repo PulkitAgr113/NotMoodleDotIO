@@ -6,6 +6,7 @@ const alertBox = document.getElementById('alert-box')
 const messageBox = document.getElementById('messages-box')
 const messageInput = document.getElementById('message-input')
 const sendBtn = document.getElementById('send-btn')
+const roomDetails = document.getElementById('roomdetails')
 
 const handleAlert = (msg, type) => {
     alertBox.innerHTML = `
@@ -18,8 +19,8 @@ const handleAlert = (msg, type) => {
     }, 5000);
 }
 
-const roomCode = 10 ;
 const userName = document.getElementById('username').value
+const roomCode = document.getElementById('roomid').value
 
 socket.emit('joinDetails', {
     'roomCode': roomCode ,
@@ -28,6 +29,14 @@ socket.emit('joinDetails', {
 
 socket.on('welcome', msg=>{
     handleAlert(msg, 'primary')
+})
+
+socket.on('roomdetails', room=>{
+    console.log('abcd')
+    roomDetails.innerHTML = ""
+    for (let i = 0; i < room.length; i++) {
+        roomDetails.innerHTML += room[i] + "<br>";
+    }
 })
 
 socket.on('leave', msg=>{
@@ -89,7 +98,7 @@ for (var i = 0; i < colors.length; i++){
 socket.on('drawing', onDrawingEvent);
 
 // If window is resized
-window.addEventListener('resize', onResize, false);
+// window.addEventListener('resize', onResize, false);
 onResize();
 
 // Utility Function

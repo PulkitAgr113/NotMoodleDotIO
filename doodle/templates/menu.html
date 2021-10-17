@@ -18,8 +18,22 @@
   
   <main>
     <h1>Hello {{username}}</h1>
-    <a href="{% url 'main' %}" class="btn btn-primary btn-lg" role="button">Go to lobby</a>
+    <a href="{% url 'main1' %}" class="btn btn-primary btn-lg" role="button">Create a Private Game</a>
+    <br>
+    <br>
+    <input type="text" id="room-code" class="form-control" placeholder="Room Code">
+    <button class="btn btn-primary mt-2" id="join-room">Join Room</button>
   </main>
+
+  <script>
+    const joinRoom = document.getElementById('join-room') ;
+    const roomCode = document.getElementById('room-code') ;
+
+    joinRoom.addEventListener('click',()=>{
+      var code = roomCode.value 
+      window.location.href = '../lobby/'+code;
+    })
+  </script>
 
 </body>
 </html>
