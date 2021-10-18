@@ -56,7 +56,7 @@ io.on('connection', socket=> {
             usersInRoom[room].splice(index, 1);
         }
         io.to(room).emit('roomdetails',usersInRoom[room])
-        io.to(room).emit('leave', 'user left the chat')
+        io.to(room).emit('leave', userName + ' left the chat')
     })
 })
 

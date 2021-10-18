@@ -8,6 +8,7 @@ main page
 {% block content %}
     <input type="hidden" value={{username}} id="username">
     <input type="hidden" value={{roomid}} id="roomid">
+    <div class="typing"><h2> Doodled!</h2></div>
     
     <div class="row h-100">
 
@@ -15,6 +16,7 @@ main page
             <h2>Room-{{roomid}}</h2>
             <div class="container" id='roomdetails'></div>
             <div id="alert-box"></div>
+            <a href = "{% url 'home' %}"><button class="btn btn-primary mt-2">Leave Room</button></a>
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
@@ -24,6 +26,7 @@ main page
                 <div class="color green"></div>
                 <div class="color blue"></div>
                 <div class="color yellow"></div>
+                <div class="color white"></div>
             </div>
         </div>
         
@@ -34,8 +37,8 @@ main page
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="text" id="message-input" class="form-control" placeholder="your message">
-                    <button class="btn btn-primary mt-2" id="send-btn">send</button>
+                    <input type="text" id="message-input" class="form-control" placeholder="Your message">
+                    <button class="btn btn-primary mt-2" id="send-btn">Send</button>
                 </div>
             </div>
         </div>
@@ -46,6 +49,3 @@ main page
 {% block scripts %}
     <script src="{% static 'main.js' %}"></script>
 {% endblock scripts %}
-
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium nulla consequatur adipisci eaque exercitationem laboriosam odit fuga optio. Praesentium facere, minima reiciendis repudiandae sint nam error quia ullam nemo ea magnam, necessitatibus nulla ratione iure assumenda molestiae. Repudiandae nulla necessitatibus sit voluptatibus corrupti consectetur qui soluta esse dolores alias nemo, vero voluptatem beatae debitis quo a quibusdam? Nostrum perferendis eveniet distinctio. Corporis, exercitationem rerum. At quam modi possimus sint aspernatur aut iusto voluptatum esse tempora voluptatem quo velit deleniti rem ipsam, molestiae quibusdam consectetur fugiat natus id illo, laboriosam facere! Similique aliquid reprehenderit quisquam rem laudantium fuga, soluta accusantium rerum?
-Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt, consequatur.

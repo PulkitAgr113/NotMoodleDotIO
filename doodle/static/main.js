@@ -105,10 +105,13 @@ onResize();
 function drawLine(x0, y0, x1, y1, color, emit){
     // Drawing a line
     context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = 5;
+    if (color == 'white') {
+        context.lineWidth = 40;
+    }
     context.moveTo(x0-rect.left, y0-rect.top);
     context.lineTo(x1-rect.left, y1-rect.top);
-    context.strokeStyle = color;
-    context.lineWidth = 2;
     context.stroke();
     context.closePath();
 
@@ -175,7 +178,7 @@ function throttle(callback, delay) {
 
 // Making the canvas fill its encloser
 function onResize() {
-    canvas.width = window.innerWidth*0.50;
-    canvas.height = window.innerWidth*0.50;
+    canvas.width = window.innerWidth*0.40;
+    canvas.height = window.innerHeight*0.60;
     rect = canvas.getBoundingClientRect();
 }
