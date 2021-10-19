@@ -52,12 +52,24 @@
         <h3> Public Rooms: </h3>
         {% for codes in codelist %}
           {% if codes.room_type == "public" %}
-            <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} - {{codes.owner_username}} </button>
             {% if codes.owner == loggedin %}
+              <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} </button>
               <button class = "btn btn-danger mt-2 delete" value="{{codes}}">Delete Room</button>
+            {% else %}
+              <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} - {{codes.owner_username}} </button>
             {% endif %}
+            <br>
           {% endif %}
-          <br>
+        {% endfor %}
+      </div>
+      <div class="col">
+        <h3> Your Rooms: </h3>
+        {% for codes in codelist %}
+          {% if codes.room_type == "private" and codes.owner == loggedin%}
+            <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} </button>
+            <button class = "btn btn-danger mt-2 delete" value="{{codes}}">Delete Room</button>
+            <br>
+          {% endif %}
         {% endfor %}
       </div>
     </div>

@@ -92,7 +92,7 @@ p {
 .chatbox {
     overflow-y: scroll;
     overflow-x: scroll;
-    height: 75%;
+    height: 75vh;
     display: flex;
     flex-direction: column-reverse;
 }
