@@ -4,6 +4,10 @@ body {
     font-family: 'monaco', monospace;  
 }
 
+main {
+    padding-left: 10px;
+}
+
 h1 {
 	margin: 1em 0 0.5em 0;
 	color: #343434;
@@ -29,6 +33,10 @@ p {
     font-family: 'monaco', monospace;
 }
 
+#room-code {
+    width: 20%;
+}
+
 .msg-self{
     background-color: #D0F0C0;
     width: fit-content;
@@ -47,6 +55,7 @@ p {
 }
 
 .colors {
+    padding-top: 2px;
     position: relative;
 }
 
@@ -61,7 +70,10 @@ p {
 .color.green { background-color: green; }
 .color.blue { background-color: blue; }
 .color.yellow { background-color: yellow; }
-.color.white { border-style: solid; }
+.color.white { 
+    border-style: solid;
+    width: 72px;
+}
 
 .whiteboard {
     position: relative;
@@ -79,7 +91,7 @@ p {
 
 .chatbox {
     overflow-y: scroll;
-    overflow-x: hidden;
+    overflow-x: scroll;
     height: 75%;
     display: flex;
     flex-direction: column-reverse;

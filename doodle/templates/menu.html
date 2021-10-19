@@ -17,23 +17,79 @@
 <body></body>
   
   <main>
-    <h1>Hello {{username}}</h1>
-    <a href="{% url 'main1' %}" class="btn btn-primary btn-lg" role="button">Create a Private Game</a>
+    <center>
+      <h1>Hello {{username}}!</h1>
+      <h2>Welcome to Doodled!</h2>
+      <a href="{% url 'main1' %}" class="btn btn-info btn-lg" role="button">Create a Private Game</a>
+      <a href="{% url 'main0' %}" class="btn btn-info btn-lg" role="button">Create a Public Game</a>
+      <a href = "{% url 'logout' %}"><button class="btn btn-warning btn-lg">Logout</button></a>
+      <br>
+      <br>
+      <input type="text" id="room-code" class="form-control text-center" placeholder="Room Code">
+      <button class="btn btn-primary mt-2" id="join-room">Join Room</button>
+    </center>
     <br>
     <br>
-    <input type="text" id="room-code" class="form-control" placeholder="Room Code">
-    <button class="btn btn-primary mt-2" id="join-room">Join Room</button>
-    <br>
-    <a href = "{% url 'logout' %}"><button class="btn btn-primary mt-2">Logout</button></a>
+    <div class="row">
+      <div class="col">
+        <h3>Registered Users:</h3>
+        {% for user in userlist %}
+          {% if user.is_superuser %}
+          {% else %}
+            <h5>{{user}}</h5>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="col">
+        <h3>Admins:</h3>
+        {% for user in userlist %}
+          {% if user.is_superuser %}
+            <h5>{{user}}</h5>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="col">
+        <h3> Public Rooms: </h3>
+        {% for codes in codelist %}
+          {% if codes.room_type == "public" %}
+            <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} - {{codes.owner_username}} </button>
+            {% if codes.owner == loggedin %}
+              <button class = "btn btn-danger mt-2 delete" value="{{codes}}">Delete Room</button>
+            {% endif %}
+          {% endif %}
+          <br>
+        {% endfor %}
+      </div>
+    </div>
   </main>
 
   <script>
     const joinRoom = document.getElementById('join-room') ;
     const roomCode = document.getElementById('room-code') ;
+    const pub = document.getElementsByClassName('public') ;
+    const del = document.getElementsByClassName('delete') ;
 
     joinRoom.addEventListener('click',()=>{
       var code = roomCode.value 
+      if(code.length != 6 || code != code.toUpperCase()) {
+        alert('Enter a valid room code!');
+        return;
+      }
       window.location.href = '../lobby/'+code;
+    })
+
+    Object.entries(pub).map((object)=>{
+      object[1].addEventListener('click',()=>{
+        var code = object[1].value
+        window.location.href = '../lobby/'+code;
+      })
+    })
+
+    Object.entries(del).map((object)=>{
+      object[1].addEventListener('click',()=>{
+        var code = object[1].value
+        window.location.href = '../delete/'+code;
+      })
     })
   </script>
 

@@ -32,7 +32,7 @@ socket.on('welcome', msg=>{
 })
 
 socket.on('roomdetails', room=>{
-    console.log('abcd')
+    // console.log('abcd')
     roomDetails.innerHTML = ""
     for (let i = 0; i < room.length; i++) {
         roomDetails.innerHTML += room[i] + "<br>";
