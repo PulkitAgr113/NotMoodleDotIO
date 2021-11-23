@@ -31,13 +31,33 @@ main page
         
         <div class="col-3 col-xl-3">
             <!-- Content here -->
-            <div class="container chatbox" id="messages-box">
-                
+
+            <!-- 
+                Some background images
+                https://www.freecodecamp.org/news/content/images/size/w2000/2021/06/w-qjCHPZbeXCQ-unsplash.jpg
+                https://amymhaddad.s3.amazonaws.com/morocco-blue.png
+             -->
+            <div class="container chatbox" id="messages-box" style= "background-image: url(https://amymhaddad.s3.amazonaws.com/morocco-blue.png)">
+                {% for msg in chat_messages %}
+                    {% if msg.author == username %}
+                        <div class="row justify-content-end" style="margin-bottom: 10px;">
+                        <div class="col-4 msg-self">
+                        <b>{{msg.author}}</b><br>
+                        {{msg.text}}
+                        </div></div>
+                    {% else %}
+                        <div class="row justify-content-start" style="margin-bottom: 10px;">
+                        <div class="col-4 msg-other">
+                        <b>{{msg.author}}</b><br>
+                        {{msg.text}}
+                        </div></div>
+                    {% endif %}
+                {% endfor %}
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="text" id="message-input" class="form-control" placeholder="Your message">
-                    <button class="btn btn-primary mt-2" id="send-btn">Send</button>
+                    <input type="text" id="message-input" class="form-control" placeholder="Message">
+                    <button class="btn btn-primary mt-2" id="send-btn">{% csrf_token %}Send</button>
                 </div>
             </div>
         </div>

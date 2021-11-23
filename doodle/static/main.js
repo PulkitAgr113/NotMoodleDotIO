@@ -48,6 +48,19 @@ sendBtn.addEventListener('click',()=>{
     const message = messageInput.value
     if(messageInput.value == "") return
     messageInput.value = ""
+
+    $.ajax({
+        type: "POST",
+        url: "../../store_msg/",
+        data:{
+            message:message,
+            roomCode:roomCode, 
+            username:userName,
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        datatype:'json',
+    }); 
+
     console.log(message)
     msg = {
         'message':message ,
