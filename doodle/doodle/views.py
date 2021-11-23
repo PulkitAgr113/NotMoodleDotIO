@@ -33,7 +33,12 @@ def main_view_2(request, room_id):
         if exist(room_id):
             room = Room.objects.get(room_code=room_id)
             chat_messages = room.messages.all().order_by('-timestamp')
-            return render(request, 'main.html', {'username':user.username, 'roomid':room_id, 'chat_messages':chat_messages})
+            canvas_url = room.canvas_data_url 
+            return render(request, 'main.html', 
+            {'username':user.username, 
+            'roomid':room_id, 
+            'chat_messages':chat_messages,
+            'canvas_url':canvas_url},)
         else:
             return redirect('/menu')
     else:
@@ -96,6 +101,7 @@ def exist(str):
 
 # Store message in database
 def store_msg(request):
+    data = {} 
     if request.method=='POST':
         message = request.POST.get('message')
         roomCode = request.POST.get('roomCode')
@@ -104,5 +110,18 @@ def store_msg(request):
         room = Room.objects.get(room_code=roomCode)
 
         ChatMessage.objects.create(room=room,text=message,author=author)
-    return JsonResponse()
+    return JsonResponse(data)
 
+# Store canvas in database
+def store_canvas(request):
+    data = {}
+    if request.method=='POST':
+        canvas_url = request.POST.get('canvas_url')
+        roomCode = request.POST.get('roomCode')
+
+        room = Room.objects.get(room_code=roomCode)
+        room.canvas_data_url = canvas_url
+        room.save()
+        print ('abc')
+
+    return JsonResponse(data)

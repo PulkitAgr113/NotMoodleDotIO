@@ -21,6 +21,7 @@ const handleAlert = (msg, type) => {
 
 const userName = document.getElementById('username').value
 const roomCode = document.getElementById('roomid').value
+const canvasURL = document.getElementById('canvas_url').value
 
 socket.emit('joinDetails', {
     'roomCode': roomCode ,
@@ -89,6 +90,14 @@ const canvas = document.getElementsByClassName('whiteboard')[0];
 const colors = document.getElementsByClassName('color');
 const context = canvas.getContext('2d');
 var rect = canvas.getBoundingClientRect();
+
+// Get canvas data of room 
+var Image = new Image;
+Image.onload = function(){
+    context.drawImage(Image, 0, 0, canvas.width, canvas.height)
+};
+Image.src = canvasURL;
+
 // Stores current brush color
 var current = {
     color: 'black'
@@ -131,6 +140,19 @@ function drawLine(x0, y0, x1, y1, color, emit){
     if (!emit) { return; }
     var w = canvas.width;
     var h = canvas.height;
+
+    var canvas_url = canvas.toDataURL("image/png");
+
+    $.ajax({
+        type: "POST",
+        url: "../../store_canvas/",
+        data:{
+            canvas_url:canvas_url,
+            roomCode:roomCode, 
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        datatype:'json',
+    });
 
     // Sending ratios because height and width could vary
     socket.emit('drawing', {

@@ -31,5 +31,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('', views.home , name='home'),
     path('store_msg/', views.store_msg, name='storeMsg'),
+    path('store_canvas/', views.store_canvas, name='storeCanvas'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
