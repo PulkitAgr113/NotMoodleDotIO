@@ -13,7 +13,7 @@ def main_view_0(request):
     user = request.user
     room_id = generateRoomCode()
     if user.is_authenticated:
-        Room.objects.create(owner = user, owner_username = user.username, room_code = room_id, room_type = "public")
+        Room.objects.create(owner = user, owner_username = user.username, room_code = room_id, room_type = "public", canvas_data_url='none')
         return redirect(f'/lobby/{room_id}')
     else:
         return redirect('/accounts/login')
@@ -22,7 +22,7 @@ def main_view_1(request):
     user = request.user
     room_id = generateRoomCode()
     if user.is_authenticated:
-        Room.objects.create(owner = user, owner_username = user.username, room_code = room_id, room_type = "private")
+        Room.objects.create(owner = user, owner_username = user.username, room_code = room_id, room_type = "private", canvas_data_url='none')
         return redirect(f'/lobby/{room_id}')
     else:
         return redirect('/accounts/login')

@@ -21,7 +21,7 @@ const handleAlert = (msg, type) => {
 
 const userName = document.getElementById('username').value
 const roomCode = document.getElementById('roomid').value
-const canvasURL = document.getElementById('canvas_url').value
+const canvasURL = document.getElementById('canvasURL').value
 
 socket.emit('joinDetails', {
     'roomCode': roomCode ,
@@ -33,7 +33,6 @@ socket.on('welcome', msg=>{
 })
 
 socket.on('roomdetails', room=>{
-    // console.log('abcd')
     roomDetails.innerHTML = ""
     for (let i = 0; i < room.length; i++) {
         roomDetails.innerHTML += room[i] + "<br>";
@@ -96,7 +95,10 @@ var Image = new Image;
 Image.onload = function(){
     context.drawImage(Image, 0, 0, canvas.width, canvas.height)
 };
-Image.src = canvasURL;
+if (canvasURL!='none'){
+    Image.src = canvasURL;
+}
+    
 
 // Stores current brush color
 var current = {
