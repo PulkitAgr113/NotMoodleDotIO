@@ -6,8 +6,10 @@ from django.contrib.auth.models import User
 from chats.models import Room, ChatMessage, Score
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 import os
 import random
+import json
 
 def main_view_0(request):
     user = request.user
@@ -27,13 +29,6 @@ def main_view_1(request):
     else:
         return redirect('/accounts/login')
 
-def change_timer(room_id):
-    room = Room.objects.get(room_code=room_id)
-    if room.started:
-        room.timer -= 1
-        if room.timer <= 0:
-            room.timer = 60
-
 def main_view_2(request, room_id):
     user = request.user
     if user.is_authenticated:
@@ -44,13 +39,12 @@ def main_view_2(request, room_id):
             chat_messages = room.messages.all().order_by('-timestamp')
             canvas_url = room.canvas_data_url 
             context = {
-                'roomid': room_id,
                 'room': room, 
                 'chat_messages': chat_messages,
                 'canvas_url': canvas_url,
-                'username': user.username,
                 'loggedin': user,
                 'curr': room.players.all()[room.current_player],
+                'start': json.dumps(room.startTime.isoformat()),
             }
             return HttpResponse(template.render(context, request))
         else:
@@ -147,6 +141,7 @@ def start_game(request, room_id):
             room.started = True
             file_path = os.path.join(os.getcwd(), '../scraper/words.txt')
             room.word = random.choice(list(open(file_path)))
+            room.startTime = timezone.now()
             room.save()
         return redirect(f'/lobby/{room_id}')
     else:

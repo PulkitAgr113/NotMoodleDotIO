@@ -6,20 +6,21 @@ main page
 {% endblock title %}
 
 {% block content %}
-    <input type="hidden" value={{username}} id="username">
-    <input type="hidden" value={{roomid}} id="roomid">
+    <input type="hidden" value={{loggedin.username}} id="username">
+    <input type="hidden" value={{room.room_code}} id="room_id">
     <input type="hidden" value={{canvas_url}} id="canvasURL">
+    <input type="hidden" value={{start}} id="startTime">
+    <input type="hidden" value={{room.started}} id="started">
     
     <div class="row h-100">
         <div class="typing"><h2> Doodled!</h2></div>
         <div class="col-3 col-xl-3">
-            <h2>Room {{roomid}}</h2>
+            <h2>Room {{room.room_code}}</h2>
             <div class="card">
                 {% for player in room.players.all %}
                     <div class = "player-container">
                         <b> {{player.username}} </b>
-                        &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;
-                        {{player.score}}
+                        {{player.user_score.score}}
                     </div>
                 {% endfor %}
             </div>
@@ -41,7 +42,7 @@ main page
                     {% endif %}
                 {% endfor %}
             {% endif %}
-            <h4 id = "time">Time left: {{room.timer}} s</h4>
+            <h4 id = "time">Time left:</h4>
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
@@ -65,7 +66,7 @@ main page
              -->
             <div class="container chatbox" id="messages-box" style= "background-image: url(https://amymhaddad.s3.amazonaws.com/morocco-blue.png)">
                 {% for msg in chat_messages %}
-                    {% if msg.author == username %}
+                    {% if msg.author == loggedin.username %}
                         <div class="row justify-content-end" style="margin-bottom: 10px;">
                         <div class="col-4 msg-self">
                         <b>{{msg.author}}</b><br>
@@ -92,21 +93,4 @@ main page
 {% endblock content %}
 {% block scripts %}
     <script src="{% static 'main.js' %}"></script>
-    <script>
-        const startGame = document.getElementById('start_game') ;
-        const roomid = document.getElementById('roomid') ;
-        const leaveRoom = document.getElementById('leave_room')
-
-        if(startGame.value == "working") {
-            startGame.addEventListener('click',()=>{
-                var code = roomid.value;
-                window.location.href = '../../start_game/' + code;
-            })
-        }
-
-        leaveRoom.addEventListener('click',()=>{
-            var code = roomid.value;
-            window.location.href = '/../../leave_room/' + code;
-        })
-    </script>
 {% endblock scripts %}

@@ -1,5 +1,53 @@
 const socket = io('http://localhost:8000')
 
+// Starting game and Leaving room
+
+const startGame = document.getElementById('start_game')
+const roomCode = document.getElementById('room_id').value
+const leaveRoom = document.getElementById('leave_room')
+
+if(startGame.value == "working") {
+    startGame.addEventListener('click',()=>{
+        window.location.href = '../../start_game/' + roomCode;
+    })
+}
+
+leaveRoom.addEventListener('click',()=>{
+    window.location.href = '/../../leave_room/' + roomCode;
+})
+
+// Timer
+
+var started = document.getElementById('started').value
+
+function makeTimer() {
+    if(started != "False") {
+        var startTime = document.getElementById('startTime').value
+        startTime = startTime. slice(1, -1);   
+        var end=new Date(startTime);
+        var endTime = new Date(end.getTime() + 61000);
+        endTime = (Date.parse(endTime) / 1000)
+    
+        var now = new Date();
+        now = (Date.parse(now) / 1000);
+
+        var timeLeft = endTime - now;
+
+        var days = Math.floor(timeLeft / 86400);
+        var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+        var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+        var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+        if (seconds < "10") { seconds = "0" + seconds; }
+        if(second <= 0) {
+            
+        }
+        $("#time").html("<h4>Time left: " + seconds + " s</h4>");
+    } 
+}
+        
+setInterval(function() { makeTimer(); }, 1000);
+
 // Chatbox and Messaging
 
 const alertBox = document.getElementById('alert-box')
@@ -20,7 +68,6 @@ const handleAlert = (msg, type) => {
 }
 
 const userName = document.getElementById('username').value
-const roomCode = document.getElementById('roomid').value
 const canvasURL = document.getElementById('canvasURL').value
 
 socket.emit('joinDetails', {

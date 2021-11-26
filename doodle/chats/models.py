@@ -12,7 +12,7 @@ class Room(models.Model):
     players = models.ManyToManyField(User, related_name="players")
     word = models.CharField(max_length=100, default="")
     current_player = models.IntegerField(default=0)
-    timer = models.IntegerField(default=60)
+    startTime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return self.room_code
@@ -27,5 +27,6 @@ class ChatMessage(models.Model):
         return f"{self.room.room_code}-{self.text}"
 
 class Score(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_score")
     score = models.IntegerField(default=0)
+    high_score = models.IntegerField(default=0)
