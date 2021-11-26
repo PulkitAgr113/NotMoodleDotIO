@@ -9,10 +9,13 @@ class Room(models.Model):
     room_type = models.CharField(max_length=7, default="")
     canvas_data_url = models.TextField(default="none")
     started = models.BooleanField(default=False)
-    players = models.ManyToManyField(User, related_name="players")
+    done_players = models.ManyToManyField(User, related_name="done_players")
+    rem_players = models.ManyToManyField(User, related_name="rem_players")
+    current_player = models.ForeignKey(User, on_delete=models.SET(owner), related_name="current_player")
+    guessed = models.ManyToManyField(User, related_name="guessed")
     word = models.CharField(max_length=100, default="")
-    current_player = models.IntegerField(default=0)
     startTime = models.DateTimeField(auto_now_add=True)
+    round_no = models.IntegerField(default=0)
 
     def __str__(self) -> str:
         return self.room_code

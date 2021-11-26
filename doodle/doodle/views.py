@@ -15,7 +15,7 @@ def main_view_0(request):
     user = request.user
     room_id = generateRoomCode()
     if user.is_authenticated:
-        Room.objects.create(owner = user, room_code = room_id, room_type = "public")
+        Room.objects.create(owner = user, room_code = room_id, room_type = "public", current_player = user)
         return redirect(f'/lobby/{room_id}')
     else:
         return redirect('/accounts/login')
@@ -24,7 +24,7 @@ def main_view_1(request):
     user = request.user
     room_id = generateRoomCode()
     if user.is_authenticated:
-        Room.objects.create(owner = user, room_code = room_id, room_type = "private")
+        Room.objects.create(owner = user, room_code = room_id, room_type = "private", current_player = user)
         return redirect(f'/lobby/{room_id}')
     else:
         return redirect('/accounts/login')
@@ -35,7 +35,8 @@ def main_view_2(request, room_id):
         if exist(room_id):
             template = loader.get_template('main.html')
             room = Room.objects.get(room_code=room_id)
-            room.players.add(user)
+            if user not in room.rem_players.all() and user not in room.done_players.all():
+                room.rem_players.add(user)
             chat_messages = room.messages.all().order_by('-timestamp')
             canvas_url = room.canvas_data_url 
             context = {
@@ -43,7 +44,7 @@ def main_view_2(request, room_id):
                 'chat_messages': chat_messages,
                 'canvas_url': canvas_url,
                 'loggedin': user,
-                'curr': room.players.all()[room.current_player],
+                'curr': room.current_player,
                 'start': json.dumps(room.startTime.isoformat()),
             }
             return HttpResponse(template.render(context, request))
@@ -116,8 +117,15 @@ def store_msg(request):
         author = request.POST.get('username')
 
         room = Room.objects.get(room_code=roomCode)
+        user = User.objects.get(username=author)
 
-        ChatMessage.objects.create(room=room,text=message,author=author)
+        if user not in room.guessed.all():
+            if message == room.word:
+                user.user_score.score += int(60 - (timezone.now() - room.startTime).total_seconds())
+                print(user.user_score.score)
+                room.guessed.add(user)
+            else:
+                ChatMessage.objects.create(room=room,text=message,author=author)
     return JsonResponse(data)
 
 # Store canvas in database
@@ -138,9 +146,12 @@ def start_game(request, room_id):
     if user.is_authenticated:
         room = Room.objects.get(room_code=room_id)
         if room.owner == user and (not room.started):
-            room.started = True
             file_path = os.path.join(os.getcwd(), '../scraper/words.txt')
-            room.word = random.choice(list(open(file_path)))
+            room.word = random.choice(list(open(file_path)))[:-1]
+            room.round_no = 1
+            room.current_player = room.rem_players.all()[0]
+            room.guessed.add(room.current_player)
+            room.started = True
             room.startTime = timezone.now()
             room.save()
         return redirect(f'/lobby/{room_id}')
@@ -151,7 +162,41 @@ def leave_room(request, room_id):
     user = request.user
     if user.is_authenticated:
         room = Room.objects.get(room_code=room_id)
-        room.players.remove(user)
+        if user in room.rem_players.all():
+            room.rem_players.remove(user)
+        if user in room.done_players.all():
+            room.done_players.remove(user)
+        if user == room.current_player:
+            update(room)
         return redirect('/menu')
     else:
         return redirect('/accounts/login')
+
+def update_player(request):
+    data = {} 
+    if request.method=='POST':
+        roomCode = request.POST.get('roomCode')
+        room = Room.objects.get(room_code=roomCode)
+
+        if room.current_player in room.rem_players.all():
+            room.rem_players.remove(room.current_player)
+        room.done_players.add(room.current_player)
+        update(room)
+    return JsonResponse(data)
+
+def update(room):
+    file_path = os.path.join(os.getcwd(), '../scraper/words.txt')
+    room.word = random.choice(list(open(file_path)))[:-1]
+    room.guessed.through.objects.all().delete()
+
+    if len(room.rem_players.all()) == 0:
+        room.rem_players.add(*room.done_players.all())
+        room.done_players.through.objects.all().delete()
+    if len(room.rem_players.all()) == 0:
+        room.current_player = room.owner
+    else:
+        room.round_no += 1
+        room.current_player = room.rem_players.all()[0]
+    room.guessed.add(room.current_player)
+    room.startTime = timezone.now()
+    room.save()

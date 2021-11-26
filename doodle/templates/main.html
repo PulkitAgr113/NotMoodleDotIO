@@ -11,15 +11,32 @@ main page
     <input type="hidden" value={{canvas_url}} id="canvasURL">
     <input type="hidden" value={{start}} id="startTime">
     <input type="hidden" value={{room.started}} id="started">
+    <input type="hidden" value={{curr}} id="currentPlayer">
+    <input type="hidden" value={{loggedin}} id="user">
     
     <div class="row h-100">
         <div class="typing"><h2> Doodled!</h2></div>
         <div class="col-3 col-xl-3">
             <h2>Room {{room.room_code}}</h2>
+            <h2 style="color: burlywood">Round {{room.round_no}}</h2>
             <div class="card">
-                {% for player in room.players.all %}
+                {% for player in room.done_players.all %}
                     <div class = "player-container">
-                        <b> {{player.username}} </b>
+                        {% if player == curr %}
+                            <b style="color:blueviolet"> {{player.username}} </b>
+                        {% else %}
+                            <b> {{player.username}} </b>
+                        {% endif %}
+                        {{player.user_score.score}}
+                    </div>
+                {% endfor %}
+                {% for player in room.rem_players.all %}
+                    <div class = "player-container">
+                        {% if player == curr %}
+                            <b style="color:blueviolet"> {{player.username}} </b>
+                        {% else %}
+                            <b> {{player.username}} </b>
+                        {% endif %}
                         {{player.user_score.score}}
                     </div>
                 {% endfor %}
@@ -31,7 +48,7 @@ main page
                 <button class="btn btn-primary mt-2" value = "working" id = "start_game">Start Game</button><br>
             {% endif %}
             <button class="btn btn-primary mt-2" id = "leave_room">Leave Room</button><br><br>
-            {% if room.owner == loggedin %}
+            {% if loggedin == curr %}
                 <h3>{{room.word}}</h3>
             {% else %}
                 {% for char in room.word %}

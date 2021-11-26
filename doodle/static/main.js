@@ -19,13 +19,14 @@ leaveRoom.addEventListener('click',()=>{
 // Timer
 
 var started = document.getElementById('started').value
+const info = document.getElementById('info')
 
 function makeTimer() {
     if(started != "False") {
         var startTime = document.getElementById('startTime').value
         startTime = startTime. slice(1, -1);   
         var end=new Date(startTime);
-        var endTime = new Date(end.getTime() + 61000);
+        var endTime = new Date(end.getTime() + 60000);
         endTime = (Date.parse(endTime) / 1000)
     
         var now = new Date();
@@ -38,10 +39,19 @@ function makeTimer() {
         var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
         var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
 
-        if (seconds < "10") { seconds = "0" + seconds; }
-        if(second <= 0) {
-            
+        if (seconds <= 0) {
+            $.ajax({
+                type: "POST",
+                url: "../../update_player/",
+                data:{
+                    roomCode:roomCode, 
+                    username:userName,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                datatype:'json',
+            });
         }
+        if (seconds < "10") { seconds = "0" + seconds; }
         $("#time").html("<h4>Time left: " + seconds + " s</h4>");
     } 
 }
@@ -54,7 +64,6 @@ const alertBox = document.getElementById('alert-box')
 const messageBox = document.getElementById('messages-box')
 const messageInput = document.getElementById('message-input')
 const sendBtn = document.getElementById('send-btn')
-// const roomDetails = document.getElementById('roomdetails')
 
 const handleAlert = (msg, type) => {
     alertBox.innerHTML = `
@@ -68,6 +77,7 @@ const handleAlert = (msg, type) => {
 }
 
 const userName = document.getElementById('username').value
+const user = document.getElementById('user').value
 const canvasURL = document.getElementById('canvasURL').value
 
 socket.emit('joinDetails', {
@@ -78,13 +88,6 @@ socket.emit('joinDetails', {
 socket.on('welcome', msg=>{
     handleAlert(msg, 'primary')
 })
-
-// socket.on('roomdetails', room=>{
-//     roomDetails.innerHTML = ""
-//     for (let i = 0; i < room.length; i++) {
-//         roomDetails.innerHTML += room[i] + "<br>";
-//     }
-// })
 
 socket.on('leave', msg=>{
     handleAlert(msg, 'danger')
@@ -118,6 +121,7 @@ sendBtn.addEventListener('click',()=>{
                             <b>${userName}</b><br>
                             ${message}
                             </div></div>` + messageBox.innerHTML 
+
     socket.emit('message', msg)
 })
 
@@ -135,6 +139,7 @@ socket.on('messageToClients', msg=>{
 const canvas = document.getElementsByClassName('whiteboard')[0];
 const colors = document.getElementsByClassName('color');
 const context = canvas.getContext('2d');
+var currentPlayer = document.getElementById("currentPlayer").value;
 var rect = canvas.getBoundingClientRect();
 
 // Get canvas data of room 
@@ -175,42 +180,44 @@ onResize();
 // Utility Function
 function drawLine(x0, y0, x1, y1, color, emit){
     // Drawing a line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = 5;
-    if (color == 'white') {
-        context.lineWidth = 40;
+    if(currentPlayer == user) {
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = 5;
+        if (color == 'white') {
+            context.lineWidth = 40;
+        }
+        context.moveTo(x0-rect.left, y0-rect.top);
+        context.lineTo(x1-rect.left, y1-rect.top);
+        context.stroke();
+        context.closePath();
+
+        if (!emit) { return; }
+        var w = canvas.width;
+        var h = canvas.height;
+
+        var canvas_url = canvas.toDataURL("image/png");
+
+        $.ajax({
+            type: "POST",
+            url: "../../store_canvas/",
+            data:{
+                canvas_url:canvas_url,
+                roomCode:roomCode, 
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            datatype:'json',
+        });
+
+        // Sending ratios because height and width could vary
+        socket.emit('drawing', {
+        x0: x0 / w,
+        y0: y0 / h,
+        x1: x1 / w,
+        y1: y1 / h,
+        color: color
+        });
     }
-    context.moveTo(x0-rect.left, y0-rect.top);
-    context.lineTo(x1-rect.left, y1-rect.top);
-    context.stroke();
-    context.closePath();
-
-    if (!emit) { return; }
-    var w = canvas.width;
-    var h = canvas.height;
-
-    var canvas_url = canvas.toDataURL("image/png");
-
-    $.ajax({
-        type: "POST",
-        url: "../../store_canvas/",
-        data:{
-            canvas_url:canvas_url,
-            roomCode:roomCode, 
-            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-        },
-        datatype:'json',
-    });
-
-    // Sending ratios because height and width could vary
-    socket.emit('drawing', {
-      x0: x0 / w,
-      y0: y0 / h,
-      x1: x1 / w,
-      y1: y1 / h,
-      color: color
-    });
 }
 
 // Position when down
