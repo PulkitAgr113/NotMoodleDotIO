@@ -4,19 +4,50 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<br>
-<br>
-<br>
-<div class="container-sm">
-
-<h2>Login to Doodled</h2>
-<br>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-primary" role="button">Log In</button>
+<div style="text-align: center;">
+  <br>
+  <br>
   
-</form>
-
+  <a href="{% url 'login' %}" class="themed-button">
+    <span class="inactive">Login</span>
+    <span class="active">&lt Login &gt</span>
+  </a>
+  <br>
+  <br>
+  <a href="{% url 'register' %}" class="themed-button">
+    <span class="inactive">Register</span>
+    <span class="active">&lt Register &gt</span>
+  </a>
 </div>
+<div class="col-8 container-sm">
+  <br>
+  <br>
+  <br>
+
+  <h2 class="head">Login To Your Account</h2>
+  <br>
+  <form method="post">
+    {% csrf_token %}
+    <div class="input-container">
+      <input id="username" type="text" name="username" class="themed-input" required="">
+		  <label for="username">Username</label>		
+	  </div>
+	  <div class="input-container">		
+      <input id="password" type="password" name="password" required="">
+		  <label for="password">Password</label>
+	  </div>
+    <button type="submit" style="
+      background: transparent;
+      background-repeat: no-repeat;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      color: white;
+      outline: none;" 
+      role="button">Login
+    </button>
+  </form>
+</div>
+
+    
 {% endblock %}

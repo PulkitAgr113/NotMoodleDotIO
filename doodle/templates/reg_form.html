@@ -3,17 +3,55 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<br>
-<br>
-<br>
+<div style="text-align: center;">
+    <br>
+    <br>
+    <a href="{% url 'login' %}" class="themed-button">
+        <span class="inactive">Login</span>
+        <span class="active">&lt Login &gt</span>
+    </a>
+    <br>
+    <br>
+    <a href="{% url 'register' %}" class="themed-button">
+        <span class="inactive">Register</span>
+        <span class="active">&lt Register &gt</span>
+    </a>
+</div>
 
-<div class="container-sm">
-<h2>Register</h2>
-<br>
-<form method='POST'> {% csrf_token %}
-    {{ form.as_p }}
 
-    <button type='submit' class="btn btn-primary" role="button">Register</button>
-</form>
+<div class="col-8 container-sm">
+    <br>
+    <br>
+    <br>
+    <h2 class="head">Create A New Account</h2>
+    <br>
+    <form method='POST'> {% csrf_token %}
+    <!-- {{ form.as_p }} -->
+
+        <div class="input-container">
+            <input id="username" type="text" name="username" class="themed-input" required="">
+            <label for="username">Username</label>		
+        </div>
+        <div class="input-container">		
+            <input id="password1" type="password" name="password1" required="">
+            <label for="password1">Password</label>
+        </div>
+        <div class="input-container">		
+            <input id="password2" type="password" name="password2" required="">
+            <label for="password2">Confirm Password</label>
+        </div>
+
+        <button type='submit' class="btn btn-primary" style="
+            border-radius:20px;
+            background: transparent;
+            background-repeat: no-repeat;
+            border: 2px;
+            border-color: white;
+            cursor: pointer;
+            overflow: hidden;
+            color: white;
+            outline: none;" role="button">Register
+        </button>
+    </form>
 </div>
 {% endblock %}
