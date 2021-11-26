@@ -5,10 +5,14 @@ from django.contrib.auth.forms import User
 
 class Room(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    owner_username = models.CharField(max_length=100, default="")
     room_code = models.CharField(max_length=6, default="")
     room_type = models.CharField(max_length=7, default="")
     canvas_data_url = models.TextField(default="none")
+    started = models.BooleanField(default=False)
+    players = models.ManyToManyField(User, related_name="players")
+    word = models.CharField(max_length=100, default="")
+    current_player = models.IntegerField(default=0)
+    timer = models.IntegerField(default=60)
 
     def __str__(self) -> str:
         return self.room_code
@@ -22,4 +26,6 @@ class ChatMessage(models.Model):
     def __str__(self) -> str:
         return f"{self.room.room_code}-{self.text}"
 
-
+class Score(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    score = models.IntegerField(default=0)

@@ -17,20 +17,21 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import main_view_0, main_view_1, main_view_2
 from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lobby/public/', main_view_0, name='main0'),
-    path('lobby/private/', main_view_1, name='main1'),
+    path('lobby/public/', views.main_view_0, name='main0'),
+    path('lobby/private/', views.main_view_1, name='main1'),
     path('delete/<str:room_id>/', views.delete, name='delete'),
-    path('lobby/<str:room_id>/', main_view_2, name='main2'),
+    path('lobby/<str:room_id>/', views.main_view_2, name='main2'),
     path('menu/', views.menu, name='menu'),
     path('accounts/', include('django.contrib.auth.urls'), name='login'),
     path('register/', views.register, name='register'),
     path('', views.home , name='home'),
     path('store_msg/', views.store_msg, name='storeMsg'),
     path('store_canvas/', views.store_canvas, name='storeCanvas'),
+    path('start_game/<str:room_id>', views.start_game, name='startGame'),
+    path('leave_room/<str:room_id>', views.leave_room, name='leaveRoom'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

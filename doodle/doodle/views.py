@@ -3,17 +3,17 @@ from django.shortcuts import redirect,render
 from doodle.forms import RegistrationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from chats.models import Room
-from chats.models import ChatMessage
+from chats.models import Room, ChatMessage, Score
 from django.template import loader
 from django.http import HttpResponse, JsonResponse
-import random 
+import os
+import random
 
 def main_view_0(request):
     user = request.user
     room_id = generateRoomCode()
     if user.is_authenticated:
-        Room.objects.create(owner = user, owner_username = user.username, room_code = room_id, room_type = "public", canvas_data_url='none')
+        Room.objects.create(owner = user, room_code = room_id, room_type = "public")
         return redirect(f'/lobby/{room_id}')
     else:
         return redirect('/accounts/login')
@@ -22,23 +22,37 @@ def main_view_1(request):
     user = request.user
     room_id = generateRoomCode()
     if user.is_authenticated:
-        Room.objects.create(owner = user, owner_username = user.username, room_code = room_id, room_type = "private", canvas_data_url='none')
+        Room.objects.create(owner = user, room_code = room_id, room_type = "private")
         return redirect(f'/lobby/{room_id}')
     else:
         return redirect('/accounts/login')
+
+def change_timer(room_id):
+    room = Room.objects.get(room_code=room_id)
+    if room.started:
+        room.timer -= 1
+        if room.timer <= 0:
+            room.timer = 60
 
 def main_view_2(request, room_id):
     user = request.user
     if user.is_authenticated:
         if exist(room_id):
+            template = loader.get_template('main.html')
             room = Room.objects.get(room_code=room_id)
+            room.players.add(user)
             chat_messages = room.messages.all().order_by('-timestamp')
             canvas_url = room.canvas_data_url 
-            return render(request, 'main.html', 
-            {'username':user.username, 
-            'roomid':room_id, 
-            'chat_messages':chat_messages,
-            'canvas_url':canvas_url},)
+            context = {
+                'roomid': room_id,
+                'room': room, 
+                'chat_messages': chat_messages,
+                'canvas_url': canvas_url,
+                'username': user.username,
+                'loggedin': user,
+                'curr': room.players.all()[room.current_player],
+            }
+            return HttpResponse(template.render(context, request))
         else:
             return redirect('/menu')
     else:
@@ -122,6 +136,27 @@ def store_canvas(request):
         room = Room.objects.get(room_code=roomCode)
         room.canvas_data_url = canvas_url
         room.save()
-        print ('abc')
 
     return JsonResponse(data)
+
+def start_game(request, room_id):
+    user = request.user
+    if user.is_authenticated:
+        room = Room.objects.get(room_code=room_id)
+        if room.owner == user and (not room.started):
+            room.started = True
+            file_path = os.path.join(os.getcwd(), '../scraper/words.txt')
+            room.word = random.choice(list(open(file_path)))
+            room.save()
+        return redirect(f'/lobby/{room_id}')
+    else:
+        return redirect('/accounts/login')
+
+def leave_room(request, room_id):
+    user = request.user
+    if user.is_authenticated:
+        room = Room.objects.get(room_code=room_id)
+        room.players.remove(user)
+        return redirect('/menu')
+    else:
+        return redirect('/accounts/login')

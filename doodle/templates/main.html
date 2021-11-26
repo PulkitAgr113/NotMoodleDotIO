@@ -14,9 +14,34 @@ main page
         <div class="typing"><h2> Doodled!</h2></div>
         <div class="col-3 col-xl-3">
             <h2>Room {{roomid}}</h2>
-            <div class="container" id='roomdetails'></div>
+            <div class="card">
+                {% for player in room.players.all %}
+                    <div class = "player-container">
+                        <b> {{player.username}} </b>
+                        &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;
+                        {{player.score}}
+                    </div>
+                {% endfor %}
+            </div>
             <div id="alert-box"></div>
-            <a href = "{% url 'home' %}"><button class="btn btn-primary mt-2">Leave Room</button></a>
+            {% if room.owner != loggedin or room.started %}
+                <button class="btn btn-secondary mt-2" value = "over" id = "start_game">Start Game</button><br>
+            {% else %}
+                <button class="btn btn-primary mt-2" value = "working" id = "start_game">Start Game</button><br>
+            {% endif %}
+            <button class="btn btn-primary mt-2" id = "leave_room">Leave Room</button><br><br>
+            {% if room.owner == loggedin %}
+                <h3>{{room.word}}</h3>
+            {% else %}
+                {% for char in room.word %}
+                    {% if char != " " %}
+                        <b>*</b>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <h4 id = "time">Time left: {{room.timer}} s</h4>
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
@@ -67,4 +92,21 @@ main page
 {% endblock content %}
 {% block scripts %}
     <script src="{% static 'main.js' %}"></script>
+    <script>
+        const startGame = document.getElementById('start_game') ;
+        const roomid = document.getElementById('roomid') ;
+        const leaveRoom = document.getElementById('leave_room')
+
+        if(startGame.value == "working") {
+            startGame.addEventListener('click',()=>{
+                var code = roomid.value;
+                window.location.href = '../../start_game/' + code;
+            })
+        }
+
+        leaveRoom.addEventListener('click',()=>{
+            var code = roomid.value;
+            window.location.href = '/../../leave_room/' + code;
+        })
+    </script>
 {% endblock scripts %}

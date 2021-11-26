@@ -6,7 +6,7 @@ const alertBox = document.getElementById('alert-box')
 const messageBox = document.getElementById('messages-box')
 const messageInput = document.getElementById('message-input')
 const sendBtn = document.getElementById('send-btn')
-const roomDetails = document.getElementById('roomdetails')
+// const roomDetails = document.getElementById('roomdetails')
 
 const handleAlert = (msg, type) => {
     alertBox.innerHTML = `
@@ -32,12 +32,12 @@ socket.on('welcome', msg=>{
     handleAlert(msg, 'primary')
 })
 
-socket.on('roomdetails', room=>{
-    roomDetails.innerHTML = ""
-    for (let i = 0; i < room.length; i++) {
-        roomDetails.innerHTML += room[i] + "<br>";
-    }
-})
+// socket.on('roomdetails', room=>{
+//     roomDetails.innerHTML = ""
+//     for (let i = 0; i < room.length; i++) {
+//         roomDetails.innerHTML += room[i] + "<br>";
+//     }
+// })
 
 socket.on('leave', msg=>{
     handleAlert(msg, 'danger')
