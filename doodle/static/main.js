@@ -104,7 +104,7 @@ function makeTimer() {
         
         }
         if (seconds < "10") { seconds = "0" + seconds; }
-        $("#time").html("<h4>Time left: " + seconds + " s</h4>");
+        $("#time").html("<h4>Time Left<br><h2> " + seconds + "s</h2> </h4>");
     } 
 }
         
@@ -113,21 +113,24 @@ setInterval(function() { makeTimer(); }, 1000);
 socket.on('broadcastUpdates', update=>{
     currentPlayer = update['currentPlayer']
     if(user==currentPlayer) {
-        word.innerHTML = update['word']
+        word.innerHTML = '<h3>'+update['word']+'</h3>'
         messageInput.disabled = true ;
     }
     
     else {
         messageInput.disabled = false ;
-        word.innerHTML = '' 
+        hidden_word = ''
         for (var i=0; i<update['word'].length; i++) {
             if(update['word'].charAt(i)!=' ') {
-                word.innerHTML += '*' 
+                hidden_word += '*'
             }
-            else word.innerHTML += ' ' 
-        }  
+            else hidden_word += ' '
+        } 
+
+        word.innerHTML = '<h3>'+hidden_word+'</h3>' 
     }
-    roundno.innerHTML = update['roundNo']
+    roundno.innerHTML = `<h2 class="round">Round ${update['roundNo']}</h2>`
+    
     playerlist.innerHTML = '' 
     for(player in update['playerlist']) {
         playerlist.innerHTML += player ;
@@ -135,8 +138,8 @@ socket.on('broadcastUpdates', update=>{
         playerlist.innerHTML += '<br>' ;
     }
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.globalAlpha = 0.5;
-    context.fillStyle = "#fff";
+    // context.globalAlpha = 0.5;
+    context.fillStyle = "rgba(200, 200, 200, 0.4)";
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
 
@@ -163,11 +166,11 @@ socket.emit('joinDetails', {
 })
 
 socket.on('welcome', msg=>{
-    handleAlert(msg, 'primary')
+    // handleAlert(msg, 'primary')
 })
 
 socket.on('leave', msg=>{
-    handleAlert(msg, 'danger')
+    // handleAlert(msg, 'danger')
 })
 
 sendBtn.addEventListener('click',()=>{
@@ -208,6 +211,16 @@ sendBtn.addEventListener('click',()=>{
     }); 
 
     
+})
+
+// Send message if enter key is pressed
+messageInput.addEventListener("keyup",function(event){
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+        event.preventDefault();
+      // Trigger the button element with a click
+        sendBtn.click();
+    }
 })
 
 socket.on('messageToClients', msg=>{
@@ -369,8 +382,8 @@ function onResize() {
     canvas.height = window.innerHeight*0.60;
     rect = canvas.getBoundingClientRect();
     context.clearRect(0, 0, canvas.width, canvas.height);
-    context.globalAlpha = 0.5;
-    context.fillStyle = "#fff";
+    // context.globalAlpha = 0.5;
+    context.fillStyle = "rgba(200, 200, 200, 0.4)";
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
 }

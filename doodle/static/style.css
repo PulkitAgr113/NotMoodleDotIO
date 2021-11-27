@@ -19,7 +19,12 @@ h2.heading {
     font-family: 'Supernatural Knight', sans-serif;
     color: white;
     font-size: 40px;
-    overflow: hidden;
+}
+
+h2.round {
+    font-family: 'Supernatural Knight', sans-serif;
+    color: burlywood;
+    font-size: 25px;
 }
 
 h2.head {
@@ -76,7 +81,14 @@ form {
 
 h3 {
     color:red;
-    font-family: monospace;
+}
+
+h4.time {
+    margin-top: 20px;
+    color: white;
+    font-family: 'Supernatural Knight', sans-serif;
+    text-align: center;
+    
 }
 
 #room-code {

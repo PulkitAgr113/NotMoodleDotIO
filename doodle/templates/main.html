@@ -25,9 +25,16 @@ main page
     </div>
 
     <div class="row h-20 justify-content-center">
-        <div class="col-6">
+        <div class="col-2">
+
+        </div>
+        <div class="col-5">
             <h1 class="title glow" style="size: 50px; text-align: left;">Doodled.IO</h1>
         </div>
+        <div class="col-3">
+            <h4 class="time" id = "time">Time Left</h4>
+        </div>
+        
     </div>
     
     <div class="row h-80">
@@ -36,8 +43,25 @@ main page
         <div class="col-3 col-xl-3">
             <h2 class="heading">Room {{room.room_code}}</h2>
             <div id="roundno"> 
-                <h2 style="color: burlywood">Round {{room.round_no}}</h2>
+                <h2 class="round">Round {{room.round_no}}</h2>
             </div>
+
+            <div id="word">
+                <h3>
+                {% if room.started == False %}
+                    ******
+                {% elif loggedin == curr %}
+                    {{room.word}}
+                {% else %}
+                {% for char in room.word %}
+                    {% if char != " " %}
+                        *
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                {% endfor %}
+                {% endif %}
+            </h3></div>
             
             <div class="card" id="playerlist">
                 {% for player in room.done_players.all %}
@@ -68,21 +92,6 @@ main page
                 <button class="btn btn-primary mt-2" value = "working" id = "start_game">Start Game</button><br>
             {% endif %}
             
-            <div id="word">
-                {% if loggedin == curr %}
-                    <h3>{{room.word}}</h3>
-                {% else %}
-                {% for char in room.word %}
-                    {% if char != " " %}
-                        <b>*</b>
-                    {% else %}
-                        &nbsp;
-                    {% endif %}
-                {% endfor %}
-                {% endif %}
-            </div>
-            
-            <h4 id = "time">Time left:</h4>
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
@@ -130,8 +139,13 @@ main page
             </div>
             <div class="row">
                 <div class="col">
-                    <input type="text" id="message-input" class="form-control" placeholder="Message">
-                    <button class="btn btn-primary mt-2" id="send-btn">{% csrf_token %}Send</button>
+                    <input type="text" 
+                    id="message-input" 
+                    class="form-control" 
+                    placeholder="Message" 
+                    style="background-color: rgba(255, 255, 255, 0.8);">
+                    <input type="hidden" id="send-btn"> {% csrf_token %}
+                    <!-- <button class="btn btn-primary mt-2" id="send-btn">{% csrf_token %}Send</button> -->
                 </div>
             </div>
         </div>

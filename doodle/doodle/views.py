@@ -187,11 +187,10 @@ def leave_room(request, room_id):
             room.done_players.remove(user)
         if user == room.current_player:
             update(room)
-        print(list(room.rem_players.all()))
-        print(list(room.done_players.all()))
-        print('abcd')
-        if(len(room.rem_players.all()) + len(room.rem_players.all()) == 0):
-            room.delete()
+        # print(list(room.rem_players.all()))
+        # print(list(room.done_players.all()))
+        # if(len(room.rem_players.all()) + len(room.rem_players.all()) == 0):
+        #     room.delete()
         return redirect('/menu')
     else:
         return redirect('/accounts/login')
@@ -217,8 +216,6 @@ def update_player(request):
 
     for player in room.done_players.all():
         playerlist[player.username] =  player.user_score.score
-
-    print(playerlist)
 
     data = {
         'startTime' : room.startTime ,
@@ -247,6 +244,9 @@ def update(room):
         if room.round_no > 3:
             room.started = False
             for player in room.done_players.all():
+                player.user_score.high_score = max(player.user_score.high_score, player.user_score.score)
+                player.user_score.save()
+            for player in room.rem_players.all():
                 player.user_score.high_score = max(player.user_score.high_score, player.user_score.score)
                 player.user_score.save()
         room.rem_players.add(*room.done_players.all())
