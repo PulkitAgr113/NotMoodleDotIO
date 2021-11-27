@@ -5,12 +5,45 @@ const socket = io('http://localhost:8000')
 const startGame = document.getElementById('start_game')
 const roomCode = document.getElementById('room_id').value
 const leaveRoom = document.getElementById('leave_room')
+const word = document.getElementById('word')
+const roundno = document.getElementById('roundno')
+const playerlist = document.getElementById('playerlist')
 
+const userName = document.getElementById('username').value
+const user = document.getElementById('user').value
+const canvasURL = document.getElementById('canvasURL').value
+
+// Canvas and Drawings
+const canvas = document.getElementsByClassName('whiteboard')[0];
+const colors = document.getElementsByClassName('color');
+const context = canvas.getContext('2d');
+
+var currentPlayer = document.getElementById("currentPlayer").value;
+var rect = canvas.getBoundingClientRect();
+
+
+// Start Game button is pressed
 if(startGame.value == "working") {
     startGame.addEventListener('click',()=>{
-        window.location.href = '../../start_game/' + roomCode;
+        $.ajax({
+            type: "POST",
+            url: "../../start_game/",
+            data:{
+                roomCode:roomCode, 
+                username:userName,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            datatype:'json',
+            success: function () {
+                socket.emit('startgame')
+            },
+        });
     })
 }
+
+socket.on('startgame', msg=>{
+    window.location.reload() 
+})
 
 leaveRoom.addEventListener('click',()=>{
     window.location.href = '/../../leave_room/' + roomCode;
@@ -40,16 +73,26 @@ function makeTimer() {
         var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
 
         if (seconds <= 0) {
-            $.ajax({
-                type: "POST",
-                url: "../../update_player/",
-                data:{
-                    roomCode:roomCode, 
-                    username:userName,
-                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
-                },
-                datatype:'json',
-            });
+            if(currentPlayer == user) {
+                $.ajax({
+                    type: "POST",
+                    url: "../../update_player/",
+                    data:{
+                        roomCode:roomCode, 
+                        username:userName,
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    datatype:'json',
+                    success: function (data) {
+                        if(data['bool']){
+                            socket.emit('update',data)
+                        }
+                        
+                    },
+                });
+            }
+            
+        
         }
         if (seconds < "10") { seconds = "0" + seconds; }
         $("#time").html("<h4>Time left: " + seconds + " s</h4>");
@@ -57,6 +100,30 @@ function makeTimer() {
 }
         
 setInterval(function() { makeTimer(); }, 1000);
+
+socket.on('broadcastUpdates', update=>{
+    currentPlayer = update['currentPlayer']
+    if(user==currentPlayer) {
+        word.innerHTML = update['word']
+    }
+    else {
+        word.innerHTML = '' 
+        for (var i=0; i<update['word'].length; i++) {
+            if(update['word'].charAt(i)!=' ') {
+                word.innerHTML += '*' 
+            }
+            else word.innerHTML += ' ' 
+        }  
+    }
+    roundno.innerHTML = update['roundNo']
+    playerlist.innerHTML = '' 
+    for(player in update['playerlist']) {
+        playerlist.innerHTML += player ;
+        playerlist.innerHTML += update['playerlist'][player] ;
+        playerlist.innerHTML += '<br>' ;
+    }
+    context.clearRect(0, 0, canvas.width, canvas.height);
+})
 
 // Chatbox and Messaging
 
@@ -76,10 +143,6 @@ const handleAlert = (msg, type) => {
     }, 5000);
 }
 
-const userName = document.getElementById('username').value
-const user = document.getElementById('user').value
-const canvasURL = document.getElementById('canvasURL').value
-
 socket.emit('joinDetails', {
     'roomCode': roomCode ,
     'userName': userName ,
@@ -95,7 +158,7 @@ socket.on('leave', msg=>{
 
 sendBtn.addEventListener('click',()=>{
    
-    const message = messageInput.value
+    let message = messageInput.value
     if(messageInput.value == "") return
     messageInput.value = ""
 
@@ -109,20 +172,27 @@ sendBtn.addEventListener('click',()=>{
             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
         },
         datatype:'json',
+        success: function (data) {
+            // If guess is correct, answer is not displayed
+            if(data['guess']) {
+                message = '**correct**'  
+            }
+
+            msg = {
+                'message':message ,
+                'username':userName ,
+            }
+            messageBox.innerHTML = `<div class="row justify-content-end" style="margin-bottom: 10px;">
+                                    <div class="col-4 msg-self">
+                                    <b>${userName}</b><br>
+                                    ${message}
+                                    </div></div>` + messageBox.innerHTML 
+        
+            socket.emit('message', msg)
+        },
     }); 
 
-    console.log(message)
-    msg = {
-        'message':message ,
-        'username':userName ,
-    }
-    messageBox.innerHTML = `<div class="row justify-content-end" style="margin-bottom: 10px;">
-                            <div class="col-4 msg-self">
-                            <b>${userName}</b><br>
-                            ${message}
-                            </div></div>` + messageBox.innerHTML 
-
-    socket.emit('message', msg)
+    
 })
 
 socket.on('messageToClients', msg=>{
@@ -134,13 +204,6 @@ socket.on('messageToClients', msg=>{
                             </div></div>` + messageBox.innerHTML
 })
 
-// Canvas and Drawings
-
-const canvas = document.getElementsByClassName('whiteboard')[0];
-const colors = document.getElementsByClassName('color');
-const context = canvas.getContext('2d');
-var currentPlayer = document.getElementById("currentPlayer").value;
-var rect = canvas.getBoundingClientRect();
 
 // Get canvas data of room 
 var Image = new Image;
@@ -180,7 +243,8 @@ onResize();
 // Utility Function
 function drawLine(x0, y0, x1, y1, color, emit){
     // Drawing a line
-    if(currentPlayer == user) {
+
+    if(currentPlayer == user || !emit) {
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = 5;
@@ -192,7 +256,8 @@ function drawLine(x0, y0, x1, y1, color, emit){
         context.stroke();
         context.closePath();
 
-        if (!emit) { return; }
+        if(!emit) return ;
+        
         var w = canvas.width;
         var h = canvas.height;
 

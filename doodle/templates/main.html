@@ -18,8 +18,11 @@ main page
         <div class="typing"><h2> Doodled!</h2></div>
         <div class="col-3 col-xl-3">
             <h2>Room {{room.room_code}}</h2>
-            <h2 style="color: burlywood">Round {{room.round_no}}</h2>
-            <div class="card">
+            <div id="roundno"> 
+                <h2 style="color: burlywood">Round {{room.round_no}}</h2>
+            </div>
+            
+            <div class="card" id="playerlist">
                 {% for player in room.done_players.all %}
                     <div class = "player-container">
                         {% if player == curr %}
@@ -48,9 +51,11 @@ main page
                 <button class="btn btn-primary mt-2" value = "working" id = "start_game">Start Game</button><br>
             {% endif %}
             <button class="btn btn-primary mt-2" id = "leave_room">Leave Room</button><br><br>
-            {% if loggedin == curr %}
-                <h3>{{room.word}}</h3>
-            {% else %}
+            
+            <div id="word">
+                {% if loggedin == curr %}
+                    <h3>{{room.word}}</h3>
+                {% else %}
                 {% for char in room.word %}
                     {% if char != " " %}
                         <b>*</b>
@@ -58,7 +63,9 @@ main page
                         &nbsp;
                     {% endif %}
                 {% endfor %}
-            {% endif %}
+                {% endif %}
+            </div>
+            
             <h4 id = "time">Time left:</h4>
         </div>
         <div class="col-6 col-xl-6">

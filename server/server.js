@@ -34,6 +34,16 @@ io.on('connection', socket=> {
         io.in(room).emit('roomdetails',usersInRoom[room])
     })
 
+    // Start game
+    socket.on('startgame', ()=>{
+        io.in(room).emit('startgame')
+    })
+
+    // Get update after round
+    socket.on('update', update=>{
+        io.in(room).emit('broadcastUpdates', update)
+    })
+
     // Enter message in chat
     socket.on('message', msg=>{
         // console.log(msg)

@@ -6,36 +6,17 @@
 
     <div class= "col align-self-end top-right" 
     style="position: absolute; right: 0; top: 0; color: white; text-align:right;
-    font-family: 'Supernatural Knight', sans-serif;"
+    font-family: 'Supernatural Knight', sans-serif;
+    margin-top: 10px;"
     > 
-      <br>
       <h2>{{username}}</h2>
       <br>
       <a href = "{% url 'logout' %}"><button class="btn btn-warning btn-lg">Logout</button></a>
       <br>
     </div>
 
-
-    <div class="col-2 container-sm" style=" font-family: 'monaco', monospace;">
-      <br>
-      <button class="btn btn-primary mt-2" id="join-room" style="margin-left:60px;">Join Room</button>
-      <input id="roomcode" 
-        type="text" 
-        name="roomcode" 
-        class="themed-input" 
-        style="text-align: center; font-family: 'Supernatural Knight', sans-serif; color: white; border-bottom: '1px' solid white ;" 
-        placeholder="RoomCode"
-        >
-      <label for="roomcode"></label>		
-      
-
-    
-    
-    <!-- <input type="text" id="room-code" class="form-control text-center" placeholder="Room Code"> -->
-    </div>
-
     <div style=" font-family: 'monaco', monospace; text-align: center;">
-    
+      <br>
       
       <a href="{% url 'main1' %}" class="themed-button">
         <span class="inactive">Create Private Game</span>
@@ -50,9 +31,31 @@
       <br>
       <br>
     </div>
-  
+
+    <div class="row justify-content-center">
+      <div class="col-3" style="text-align: center;">
+        <!-- <button class="btn themed-button" id="join-room" style="margin-left:60px; text-align: center;">Join Room</button> -->
+        <input id="roomcode" 
+          type="text" 
+          name="roomcode" 
+          class="themed-input" 
+          style="text-align: center; font-family: 'Supernatural Knight', sans-serif; color: white; border-bottom: 1px solid white ; font-size: 30px;" 
+          placeholder="RoomCode"
+          size="9"
+          
+          >
+        <label for="roomcode"></label>
+        <input type="image" id="join-room" src="/static/btn.png" width="40px">
+        		
+      <!-- <input type="text" id="room-code" class="form-control text-center" placeholder="Room Code"> -->
+      <br>
+      </div>
+      <br>
+    </div>
+
     <div class="row">
       <div class="col">
+        <br>
         <h3 style = "color: lightgreen;">High Scores:</h3>
         {% for user in userlist %}
           {% if user.is_superuser %}
@@ -62,6 +65,7 @@
         {% endfor %}
       </div>
       <div class="col">
+        <br>
         <h3>Admins:</h3>
         {% for user in userlist %}
           {% if user.is_superuser %}
@@ -70,6 +74,7 @@
         {% endfor %}
       </div>
       <div class="col">
+        <br>
         <h3> Public Rooms: </h3>
         {% for codes in codelist %}
           {% if codes.room_type == "public" %}
@@ -84,7 +89,9 @@
         {% endfor %}
       </div>
       <div class="col">
+        <br>
         <h3> Your Rooms: </h3>
+        <br>
         {% for codes in codelist %}
           {% if codes.room_type == "private" and codes.owner == loggedin%}
             <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} </button>

@@ -305,3 +305,8 @@ html,body {
   .player-container {
     padding: 2px 16px;
   }
+
+input:focus {
+    outline: none;
+    border-bottom: 1px solid white;
+}

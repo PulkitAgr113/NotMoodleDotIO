@@ -31,7 +31,7 @@ urlpatterns = [
     path('', views.home , name='home'),
     path('store_msg/', views.store_msg, name='storeMsg'),
     path('store_canvas/', views.store_canvas, name='storeCanvas'),
-    path('start_game/<str:room_id>', views.start_game, name='startGame'),
+    path('start_game/', views.start_game, name='startGame'),
     path('leave_room/<str:room_id>', views.leave_room, name='leaveRoom'),
     path('update_player/', views.update_player, name='updatePlayer'),
 
