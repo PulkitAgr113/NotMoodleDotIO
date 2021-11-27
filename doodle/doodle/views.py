@@ -138,8 +138,10 @@ def store_msg(request):
         if user not in room.guessed.all():
             if message == room.word:
                 user.user_score.score += int(60 - (timezone.now() - room.startTime).total_seconds())
+                room.current_player.user_score.score += int(user.user_score.score / 2)
                 print(user.user_score.score)
                 user.user_score.save()
+                room.current_player.user_score.save()
                 room.guessed.add(user)
                 data['guess'] = True
             else:
@@ -249,6 +251,7 @@ def update(room):
             for player in room.rem_players.all():
                 player.user_score.high_score = max(player.user_score.high_score, player.user_score.score)
                 player.user_score.save()
+            room.round_no = 0
         room.rem_players.add(*room.done_players.all())
         room.done_players.through.objects.all().delete()
 
@@ -259,4 +262,3 @@ def update(room):
     room.guessed.add(room.current_player)
     room.startTime = timezone.now()
     room.save()
-
