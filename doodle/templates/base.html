@@ -15,15 +15,47 @@
 
     <title>chat proj | {% block title %}{% endblock title %}</title>
   </head>
-  <body>
+  <body style="background-image: url(/static/bg3.png) ;
+  background-size: cover" id="background">
     <div class="container-fluid h-100">
-        {% block content %}
-        {% endblock content %}
+      {% block content %}
+      {% endblock content %}
+    </div>
+    <div style="position: absolute; top: 20px;">
+      <input type="image" src="/static/logo1.png" width="20" height="20" id="bg1">
+      <input type="image" src="/static/logo2.png" width="20" height="20" id="bg2">
+      <input type="image" src="/static/logo3.png" width="20" height="20" id="bg3">
+      <input type="image" src="/static/logo4.png" width="20" height="20" id="bg4">
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js" integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU" crossorigin="anonymous"></script>
         
         {% block scripts %}
-        {% endblock scripts %}     
+        
+        {% endblock scripts %}   
+        
+    <script>
+      const logo1 = document.getElementById("bg1")
+    const logo2 = document.getElementById("bg2")
+    const logo3 = document.getElementById("bg3")
+    const logo4 = document.getElementById("bg4")
+    const bg = document.getElementById("background")
+    
+    logo1.addEventListener('click',()=>{
+      bg.style.backgroundImage = 'url("/static/bg1.png")';
+    })
+
+    logo2.addEventListener('click',()=>{
+      bg.style.backgroundImage = 'url("/static/bg2.png")';
+    })
+
+    logo3.addEventListener('click',()=>{
+      bg.style.backgroundImage = 'url("/static/bg3.png")';
+    })
+
+    logo4.addEventListener('click',()=>{
+      bg.style.backgroundImage = 'url("/static/bg4.png")';
+    })
+    </script>
   </body>
 </html>

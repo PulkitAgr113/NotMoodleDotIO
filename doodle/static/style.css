@@ -7,7 +7,7 @@ main {
 }
 
 h1.title {
-    margin: 1em 0 0.5em 0;
+    margin: 20px 0 20px 0;
     font-family: 'Supernatural Knight', sans-serif;
     color: white;
     font-size: 80px;
@@ -99,19 +99,46 @@ h3 {
 }
 
 .color {
-    display: inline-block;
+    /* display: inline-block; */
     height: 48px;
     width: 48px;
 }
 
-.color.black { background-color: black; }
-.color.red { background-color: red; }
-.color.green { background-color: green; }
-.color.blue { background-color: blue; }
-.color.yellow { background-color: yellow; }
-.color.white { 
-    border-style: solid;
-    width: 72px;
+.color.c1 { 
+    background-color: #4e79a7; 
+}
+.color.c2 { 
+    background-color: #f28e2b; 
+}
+.color.c3 { 
+    background-color: #e15759; 
+}
+.color.c4 { 
+    background-color: #76b7b2; 
+}
+.color.c5 { 
+    background-color: #59a14f; 
+}
+.color.c6 { 
+    background-color: #edc948; 
+}
+.color.c7 { 
+    background-color: #b07aa1; 
+}
+.color.c8 { 
+    background-color: #ff9da7; 
+}
+.color.c9 { 
+    background-color: #9c755f; 
+}
+.color.c10 { 
+    background-color: #bab0ac; 
+}
+.color.c11 { 
+    background-color: black;
+}
+.color.c12 { 
+    background-color: white;
 }
 
 .whiteboard {
@@ -120,8 +147,10 @@ h3 {
     right: 0;
     bottom: 0;
     top: 0;
-    border:2px solid #000000;
+    /* border:3px solid black; */
+    /* border-radius: 20px; */
     cursor: pointer;
+    color: white;
 }
 
 .whiteboard:active { 

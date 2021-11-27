@@ -13,9 +13,23 @@ main page
     <input type="hidden" value={{room.started}} id="started">
     <input type="hidden" value={{curr}} id="currentPlayer">
     <input type="hidden" value={{loggedin}} id="user">
+
+    <div class= "col align-self-end top-right" 
+    style="position: absolute; right: 0; top: 0; color: white; text-align:right;
+    font-family: 'Supernatural Knight', sans-serif;
+    margin-top: 10px;
+    margin-right: 10px;"
+    > 
+      <h2>{{loggedin.username}}</h2>
+    </div>
+
+    <div class="row h-20">
+        <h1 class="title glow" style="size: 50px;">Doodled.IO</h1>
+    </div>
     
-    <div class="row h-100">
-        <div class="typing"><h2> Doodled!</h2></div>
+    <div class="row h-80">
+        
+        <!-- <div class="typing"><h2> Doodled!</h2></div> -->
         <div class="col-3 col-xl-3">
             <h2>Room {{room.room_code}}</h2>
             <div id="roundno"> 
@@ -70,13 +84,20 @@ main page
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
-            <div class="colors">
-                <div class="color black"></div>
-                <div class="color red"></div>
-                <div class="color green"></div>
-                <div class="color blue"></div>
-                <div class="color yellow"></div>
-                <div class="color white"></div>
+            <div class="row colors">
+                <div class="color c1"></div>
+                <div class="color c2"></div>
+                <div class="color c3"></div>
+                <div class="color c4"></div>
+                <div class="color c5"></div>
+                <div class="color c6"></div>
+                <div class="color c7"></div>
+                <div class="color c8"></div>
+                <div class="color c9"></div>
+                <div class="color c10"></div>
+                <div class="color c11"></div>
+                <div class="color c12"></div>
+                
             </div>
         </div>
         
@@ -88,7 +109,7 @@ main page
                 https://www.freecodecamp.org/news/content/images/size/w2000/2021/06/w-qjCHPZbeXCQ-unsplash.jpg
                 https://amymhaddad.s3.amazonaws.com/morocco-blue.png
              -->
-            <div class="container chatbox" id="messages-box" style= "background-image: url(https://amymhaddad.s3.amazonaws.com/morocco-blue.png)">
+            <div class="container chatbox" id="messages-box" style= "background-color: rgba(200, 200, 200, 0.4);">
                 {% for msg in chat_messages %}
                     {% if msg.author == loggedin.username %}
                         <div class="row justify-content-end" style="margin-bottom: 10px;">

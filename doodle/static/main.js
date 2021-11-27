@@ -123,6 +123,10 @@ socket.on('broadcastUpdates', update=>{
         playerlist.innerHTML += '<br>' ;
     }
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context.globalAlpha = 0.5;
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.globalAlpha = 1;
 })
 
 // Chatbox and Messaging
@@ -243,6 +247,7 @@ onResize();
 // Utility Function
 function drawLine(x0, y0, x1, y1, color, emit){
     // Drawing a line
+    if(started == 'False') return
 
     if(currentPlayer == user || !emit) {
         context.beginPath();
@@ -307,9 +312,24 @@ function onMouseMove(e){
     current.y = e.clientY||e.touches[0].clientY;
 }
 
+var color = {
+    c1: '#4e79a7',
+    c2: '#f28e2b',
+    c3: '#e15759',
+    c4: '#76b7b2',
+    c5: '#59a14f',
+    c6: '#edc948',
+    c7: '#b07aa1',
+    c8: '#ff9da7',
+    c9: '#9c755f',
+    c10: '#bab0ac',
+    c11: 'black',
+    c12: 'white',
+}
+
 // Colour change
 function onColorUpdate(e){
-    current.color = e.target.className.split(' ')[1];
+    current.color = color[e.target.className.split(' ')[1]];
 }
 
 // Drawing received from other sockets 
@@ -337,4 +357,9 @@ function onResize() {
     canvas.width = window.innerWidth*0.40;
     canvas.height = window.innerHeight*0.60;
     rect = canvas.getBoundingClientRect();
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.globalAlpha = 0.5;
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.globalAlpha = 1;
 }
