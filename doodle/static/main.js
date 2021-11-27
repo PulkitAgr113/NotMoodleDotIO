@@ -18,6 +18,12 @@ const canvas = document.getElementsByClassName('whiteboard')[0];
 const colors = document.getElementsByClassName('color');
 const context = canvas.getContext('2d');
 
+// Chatbox and Messaging
+const alertBox = document.getElementById('alert-box')
+const messageBox = document.getElementById('messages-box')
+const messageInput = document.getElementById('message-input')
+const sendBtn = document.getElementById('send-btn')
+
 var currentPlayer = document.getElementById("currentPlayer").value;
 var rect = canvas.getBoundingClientRect();
 
@@ -56,6 +62,9 @@ const info = document.getElementById('info')
 
 function makeTimer() {
     if(started != "False") {
+        if(user==currentPlayer) {
+            messageInput.disabled = true ;
+        }
         var startTime = document.getElementById('startTime').value
         startTime = startTime. slice(1, -1);   
         var end=new Date(startTime);
@@ -105,8 +114,11 @@ socket.on('broadcastUpdates', update=>{
     currentPlayer = update['currentPlayer']
     if(user==currentPlayer) {
         word.innerHTML = update['word']
+        messageInput.disabled = true ;
     }
+    
     else {
+        messageInput.disabled = false ;
         word.innerHTML = '' 
         for (var i=0; i<update['word'].length; i++) {
             if(update['word'].charAt(i)!=' ') {
@@ -127,14 +139,12 @@ socket.on('broadcastUpdates', update=>{
     context.fillStyle = "#fff";
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
+
+
+    if(update['started']==false) {
+        window.location.href = '/../../leave_room/' + roomCode;
+    } 
 })
-
-// Chatbox and Messaging
-
-const alertBox = document.getElementById('alert-box')
-const messageBox = document.getElementById('messages-box')
-const messageInput = document.getElementById('message-input')
-const sendBtn = document.getElementById('send-btn')
 
 const handleAlert = (msg, type) => {
     alertBox.innerHTML = `
@@ -180,6 +190,7 @@ sendBtn.addEventListener('click',()=>{
             // If guess is correct, answer is not displayed
             if(data['guess']) {
                 message = '**correct**'  
+                messageInput.disabled = true;
             }
 
             msg = {
@@ -363,3 +374,19 @@ function onResize() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
 }
+
+// Reload and Exit
+// $(window).on('beforeunload', function() {
+//     window.location.href = '/../../leave_room/' + roomCode;
+//     return 'Not an empty string';
+// });
+
+// window.addEventListener('beforeunload', function(e) {
+//     if(true) {
+//       //following two lines will cause the browser to ask the user if they
+//       //want to leave. The text of this dialog is controlled by the browser.
+//       leaveRoom.click()
+//       e.returnValue = 'You will be sent to Menu'; //required for Chrome
+//     }
+//     //else: user is allowed to leave without a warning dialog
+// });

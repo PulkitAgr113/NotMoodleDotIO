@@ -50,23 +50,38 @@ https://i.redd.it/hi3gbehp0gi21.png
     const logo2 = document.getElementById("bg2")
     const logo3 = document.getElementById("bg3")
     const logo4 = document.getElementById("bg4")
-    const bg = document.getElementById("background")
+    const background = document.getElementById("background")
     
     logo1.addEventListener('click',()=>{
-      bg.style.backgroundImage = 'url("/static/bg1.png")';
+      background.style.backgroundImage = 'url("/static/bg1.png")';
     })
 
     logo2.addEventListener('click',()=>{
-      bg.style.backgroundImage = 'url("/static/bg2.png")';
+      background.style.backgroundImage = 'url("/static/bg2.png")';
     })
 
     logo3.addEventListener('click',()=>{
-      bg.style.backgroundImage = 'url("/static/bg3.png")';
+      background.style.backgroundImage = 'url("/static/bg3.png")';
     })
 
     logo4.addEventListener('click',()=>{
-      bg.style.backgroundImage = 'url("/static/bg4.png")';
+      background.style.backgroundImage = 'url("/static/bg4.png")';
     })
+
+    var bg = Math.floor(Math.random() * 4) + 1;
+      
+    if(bg==1) {
+      logo1.click()
+    }
+    if(bg==2) {
+      logo2.click()
+    }
+    if(bg==3) {
+      logo3.click()
+    }
+    if(bg==4) {
+      logo4.click()
+    }
 
   </script>
 

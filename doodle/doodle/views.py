@@ -35,10 +35,12 @@ def main_view_2(request, room_id):
         if exist(room_id):
             template = loader.get_template('main.html')
             room = Room.objects.get(room_code=room_id)
-            user.user_score.score = 0
-            user.user_score.save()
+            
             if user not in room.rem_players.all() and user not in room.done_players.all():
+                user.user_score.score = 0
                 room.rem_players.add(user)
+                user.user_score.save()
+
             chat_messages = room.messages.all().order_by('-timestamp')
             canvas_url = room.canvas_data_url 
             context = {
@@ -90,11 +92,21 @@ def menu(request):
         template = loader.get_template('menu.html')
         user_list = User.objects.all()
         code_list = Room.objects.all()
+        admin = []
+        nonadmin = [] 
+        for player in user_list:
+            if player.is_superuser:
+                admin.append(player)
+            else :
+                nonadmin.append((player, player.user_score.high_score))
+
+        nonadmin.sort(reverse=True, key = lambda x: x[1])
         context = {
             'username': user.username,
-            'userlist': user_list,
+            'admin': admin,
             'codelist': code_list,
             'loggedin': user,
+            'nonadmin': nonadmin,
         }
         return HttpResponse(template.render(context, request))
     else:
@@ -154,7 +166,7 @@ def start_game(request):
         room = Room.objects.get(room_code=roomCode)
 
         file_path = os.path.join(os.getcwd(), '../scraper/words.txt')
-        room.word = random.choice(list(open(file_path)))[:-1]
+        room.word = random.choice(list(open(file_path)))[:-1].lower()
         room.round_no = 1
         room.current_player = room.rem_players.all()[0]
         room.guessed.add(room.current_player)
@@ -175,6 +187,11 @@ def leave_room(request, room_id):
             room.done_players.remove(user)
         if user == room.current_player:
             update(room)
+        print(list(room.rem_players.all()))
+        print(list(room.done_players.all()))
+        print('abcd')
+        if(len(room.rem_players.all()) + len(room.rem_players.all()) == 0):
+            room.delete()
         return redirect('/menu')
     else:
         return redirect('/accounts/login')
@@ -209,7 +226,8 @@ def update_player(request):
         'word' : room.word ,
         'roundNo' : room.round_no ,
         'playerlist' : playerlist ,
-        'bool' : True
+        'bool' : True ,
+        'started' : room.started
     }
     return JsonResponse(data)
 
@@ -217,21 +235,28 @@ def update(room):
     print('update')
     if room.current_player in room.rem_players.all():
         room.rem_players.remove(room.current_player)
-    room.done_players.add(room.current_player)
+        room.done_players.add(room.current_player)
 
     file_path = os.path.join(os.getcwd(), '../scraper/words.txt')
-    room.word = random.choice(list(open(file_path)))[:-1]
+    room.word = random.choice(list(open(file_path)))[:-1].lower()
     room.guessed.through.objects.all().delete()
     room.canvas_data_url = 'none'
 
     if len(room.rem_players.all()) == 0:
+        room.round_no += 1
+        if room.round_no > 3:
+            room.started = False
+            for player in room.done_players.all():
+                player.user_score.high_score = max(player.user_score.high_score, player.user_score.score)
+                player.user_score.save()
         room.rem_players.add(*room.done_players.all())
         room.done_players.through.objects.all().delete()
+
     if len(room.rem_players.all()) == 0:
         room.current_player = room.owner
     else:
-        room.round_no += 1
         room.current_player = room.rem_players.all()[0]
     room.guessed.add(room.current_player)
     room.startTime = timezone.now()
     room.save()
+

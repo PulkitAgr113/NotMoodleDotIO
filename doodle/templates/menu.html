@@ -45,7 +45,7 @@
           
           >
         <label for="roomcode"></label>
-        <input type="image" id="join-room" src="/static/btn.png" width="40px">
+        <input type="hidden" id="join-room">
         		
       <!-- <input type="text" id="room-code" class="form-control text-center" placeholder="Room Code"> -->
       <br>
@@ -57,20 +57,15 @@
       <div class="col">
         <br>
         <h3 style = "color: lightgreen;">High Scores:</h3>
-        {% for user in userlist %}
-          {% if user.is_superuser %}
-          {% else %}
-            <h5 style="font-family: 'Supernatural Knight', sans-serif; color: white;">{{user}} <b>--</b> {{user.user_score.high_score}}</h5>
-          {% endif %}
+        {% for user,score in nonadmin %}
+          <h5 style="font-family: 'Supernatural Knight', sans-serif; color: white;">{{user}} <b>--</b> {{score}}</h5>
         {% endfor %}
       </div>
       <div class="col">
         <br>
         <h3>Admins:</h3>
-        {% for user in userlist %}
-          {% if user.is_superuser %}
+        {% for user in admin %}
             <h5 style="font-family: 'Supernatural Knight', sans-serif; color: white;">{{user}}</h5>
-          {% endif %}
         {% endfor %}
       </div>
       <div class="col">
@@ -116,6 +111,16 @@
           return;
         }
         window.location.href = '../lobby/'+code;
+      })
+
+      // Submit input if enter key is pressed
+      roomCode.addEventListener("keyup",function(event){
+        if (event.keyCode === 13) {
+          // Cancel the default action, if needed
+          event.preventDefault();
+          // Trigger the button element with a click
+          joinRoom.click();
+        }
       })
   
       Object.entries(pub).map((object)=>{

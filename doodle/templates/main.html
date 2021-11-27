@@ -21,17 +21,20 @@ main page
     margin-right: 10px;"
     > 
       <h2>{{loggedin.username}}</h2>
+      <button class="btn btn-primary mt-2" id = "leave_room">Leave Room</button><br>
     </div>
 
-    <div class="row h-20">
-        <h1 class="title glow" style="size: 50px;">Doodled.IO</h1>
+    <div class="row h-20 justify-content-center">
+        <div class="col-6">
+            <h1 class="title glow" style="size: 50px; text-align: left;">Doodled.IO</h1>
+        </div>
     </div>
     
     <div class="row h-80">
         
         <!-- <div class="typing"><h2> Doodled!</h2></div> -->
         <div class="col-3 col-xl-3">
-            <h2>Room {{room.room_code}}</h2>
+            <h2 class="heading">Room {{room.room_code}}</h2>
             <div id="roundno"> 
                 <h2 style="color: burlywood">Round {{room.round_no}}</h2>
             </div>
@@ -64,7 +67,6 @@ main page
             {% else %}
                 <button class="btn btn-primary mt-2" value = "working" id = "start_game">Start Game</button><br>
             {% endif %}
-            <button class="btn btn-primary mt-2" id = "leave_room">Leave Room</button><br><br>
             
             <div id="word">
                 {% if loggedin == curr %}
@@ -84,7 +86,7 @@ main page
         </div>
         <div class="col-6 col-xl-6">
             <canvas class="whiteboard"></canvas>
-            <div class="row colors">
+            <div class="row colors" style="margin-left: 5px;">
                 <div class="color c1"></div>
                 <div class="color c2"></div>
                 <div class="color c3"></div>

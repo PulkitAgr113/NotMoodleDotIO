@@ -15,6 +15,13 @@ h1.title {
     text-align: center;
 }
 
+h2.heading {
+    font-family: 'Supernatural Knight', sans-serif;
+    color: white;
+    font-size: 40px;
+    overflow: hidden;
+}
+
 h2.head {
     font-family: 'Supernatural Knight', sans-serif;
     color: white;
