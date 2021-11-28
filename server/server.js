@@ -55,6 +55,10 @@ io.on('connection', socket=> {
         socket.broadcast.to(room).emit('drawing', diagram);
     })
 
+    socket.on('kickPlayer', (kickSpec)=>{
+        io.to(room).emit('kickVote', kickSpec);
+    })
+
     // Broadcast leave message .
     socket.on('disconnect',()=>{
         userName = socket.username
@@ -66,7 +70,7 @@ io.on('connection', socket=> {
             usersInRoom[room].splice(index, 1);
         }
         io.to(room).emit('roomdetails',usersInRoom[room])
-        io.to(room).emit('leave', userName + ' left the chat')
+        io.to(room).emit('leave', userName)
     })
 })
 

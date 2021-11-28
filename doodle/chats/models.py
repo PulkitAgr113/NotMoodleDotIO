@@ -33,3 +33,4 @@ class Score(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_score")
     score = models.IntegerField(default=0)
     high_score = models.IntegerField(default=0)
+    kickers = models.ManyToManyField(User, related_name="kickers")

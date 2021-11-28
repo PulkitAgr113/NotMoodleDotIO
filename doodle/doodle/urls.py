@@ -30,6 +30,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('', views.home , name='home'),
     path('store_msg/', views.store_msg, name='storeMsg'),
+    path('kick_vote/', views.kick_vote, name='kickVote'),
     path('store_canvas/', views.store_canvas, name='storeCanvas'),
     path('start_game/', views.start_game, name='startGame'),
     path('leave_room/<str:room_id>', views.leave_room, name='leaveRoom'),

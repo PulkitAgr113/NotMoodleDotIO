@@ -65,23 +65,31 @@ main page
             
             <div class="card" id="playerlist">
                 {% for player in room.done_players.all %}
-                    <div class = "player-container">
+                    <div class = "player-container playerclick">
+                        {{player.kickers.all|length}}
                         {% if player == curr %}
                             <b style="color:blueviolet"> {{player.username}} </b>
                         {% else %}
                             <b> {{player.username}} </b>
                         {% endif %}
                         {{player.user_score.score}}
+                        {% if player.username != loggedin.username %}
+                            <button class="kickButtons" id="{{player.username}}">Kick</button>
+                        {% endif %}
                     </div>
                 {% endfor %}
                 {% for player in room.rem_players.all %}
-                    <div class = "player-container">
+                    <div class = "player-container playerclick">
+                        {{player.kickers.all|length}}
                         {% if player == curr %}
                             <b style="color:blueviolet"> {{player.username}} </b>
                         {% else %}
                             <b> {{player.username}} </b>
                         {% endif %}
                         {{player.user_score.score}}
+                        {% if player.username != loggedin.username %}
+                            <button class="kickButtons" id="{{player.username}}">Kick</button>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

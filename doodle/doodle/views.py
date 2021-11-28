@@ -148,6 +148,27 @@ def store_msg(request):
                 ChatMessage.objects.create(room=room,text=message,author=author)
     return JsonResponse(data)
 
+def kick_vote(request):
+    data = {
+        'vote_valid': False,
+        'to_kick': None
+    }
+    if request.method=='POST':
+        kicker = request.POST.get('kicker')
+        kicked = request.POST.get('kicked')
+        roomCode = request.POST.get('room')
+        user_kicked = User.objects.get(username=kicked)
+        user_kicker = User.objects.get(username=kicker)
+        room = Room.objects.get(room_code=roomCode)
+
+        if user_kicker not in user_kicked.user_score.kickers.all():
+            user_kicked.user_score.kickers.add(user_kicker)
+            if len(user_kicked.user_score.kickers.all()) >= (len(room.done_players.all()) + len(room.rem_players.all()) - 1)//2:
+                data['to_kick'] = kicked
+                user_kicked.user_score.kickers.clear()
+            data['vote_valid'] = True
+    return JsonResponse(data)
+
 # Store canvas in database
 def store_canvas(request):
     data = {}
@@ -182,6 +203,7 @@ def start_game(request):
 def leave_room(request, room_id):
     user = request.user
     if user.is_authenticated:
+        user.user_score.kickers.clear()
         room = Room.objects.get(room_code=room_id)
         if user in room.rem_players.all():
             room.rem_players.remove(user)
@@ -242,6 +264,8 @@ def update(room):
     room.canvas_data_url = 'none'
 
     if len(room.rem_players.all()) == 0:
+        for user in room.done_players.all():
+            user.user_score.kickers.clear()
         room.round_no += 1
         if room.round_no > 3:
             room.started = False

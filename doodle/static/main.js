@@ -8,6 +8,7 @@ const leaveRoom = document.getElementById('leave_room')
 const word = document.getElementById('word')
 const roundno = document.getElementById('roundno')
 const playerlist = document.getElementById('playerlist')
+const playerNames = document.getElementsByClassName('kickButtons')
 
 const userName = document.getElementById('username').value
 const user = document.getElementById('user').value
@@ -173,6 +174,13 @@ socket.on('leave', msg=>{
     // handleAlert(msg, 'danger')
 })
 
+socket.on('kickVote', player=>{
+    console.log("Kicking")
+    console.log(player)
+    if (player != userName) return
+    window.location.href = '/../../leave_room/' + roomCode;
+})
+
 sendBtn.addEventListener('click',()=>{
    
     let message = messageInput.value
@@ -260,6 +268,32 @@ canvas.addEventListener('mousemove', throttle(onMouseMove, 10));
 for (var i = 0; i < colors.length; i++){
     colors[i].addEventListener('click', onColorUpdate);
 }
+
+for (var i = 0; i < playerNames.length; i++) {
+    playerNames[i].addEventListener('click', onKickVote);
+}
+
+function onKickVote(e) {
+    if (e.target.id == userName) return    
+    $.ajax({
+        type: "POST",
+        url: "../../kick_vote/",
+        data:{
+            kicker: userName,
+            kicked: e.target.id,
+            room: roomCode,
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        datatype: 'json',
+        success: function (data) {
+            if (data['to_kick'] != null) {
+                socket.emit('kickPlayer', data['to_kick'])
+            }
+        },
+    });
+}
+
+
 
 // Receiving broadcast
 socket.on('drawing', onDrawingEvent);
