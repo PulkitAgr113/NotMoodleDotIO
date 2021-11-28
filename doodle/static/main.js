@@ -5,7 +5,7 @@ const socket = io('http://localhost:8000')
 const startGame = document.getElementById('start_game')
 const roomCode = document.getElementById('room_id').value
 const leaveRoom = document.getElementById('leave_room')
-const word = document.getElementById('word')
+var word = document.getElementById('word')
 const roundno = document.getElementById('roundno')
 const playerlist = document.getElementById('playerlist')
 var playerNames = document.getElementsByClassName('kickButtons')
@@ -48,10 +48,6 @@ if(startGame.value == "working") {
     })
 }
 
-// socket.on('startgame', msg=>{
-//     window.location.reload() 
-// })
-
 // Leave room button
 leaveRoom.addEventListener('click',()=>{
     $.ajax({
@@ -63,9 +59,6 @@ leaveRoom.addEventListener('click',()=>{
             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
         },
         datatype:'json',
-        // success: function (data) {
-        //      socket.emit('update',data)
-        // },
     });
     sleep(1000)
     window.location.href = '../../menu/';
@@ -96,6 +89,24 @@ function makeTimer() {
         var hours = Math.floor((timeLeft - (days * 86400)) / 3600);
         var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
         var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+
+        if(seconds<=30) {
+            if(currentPlayer != user) {
+                hidden_word = ''
+                for (var i=0; i<word.value.length; i++) {
+                    if(i==0 || i==word.value.length-1) {
+                        hidden_word += word.value[i]
+                    }
+                    else if(word.value.charAt(i)!=' ') {
+                        hidden_word += '*'
+                    }
+                    else hidden_word += ' '
+                } 
+
+                word.innerHTML = '<h3>'+hidden_word+'</h3>' 
+            }
+            
+        }
 
         if (seconds <= 0) {
             if(currentPlayer == user) {
@@ -139,6 +150,7 @@ socket.on('broadcastUpdates', update=>{
     console.log('updated ...')
     currentPlayer = update['currentPlayer']
     console.log(currentPlayer)
+    word.value = update['word']
     if(user==currentPlayer) {
         word.innerHTML = '<h3>'+update['word']+'</h3>'
         messageInput.disabled = true ;
@@ -222,9 +234,6 @@ socket.on('broadcastUpdates', update=>{
                 'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
             },
             datatype:'json',
-            // success: function (data) {
-            //     // socket.emit('update',data)
-            // },
         });
         window.location.href = '../../menu/';
     } 
@@ -285,7 +294,6 @@ socket.on('leave', msg=>{
                 socket.emit('update',data)
             },
         });
-    // handleAlert(msg, 'danger')
 })
 
 socket.on('kickVote', player=>{
@@ -361,7 +369,6 @@ messageInput.addEventListener("keyup",function(event){
 })
 
 socket.on('messageToClients', msg=>{
-    // console.log('msg from server'+msg)
     messageBox.innerHTML = `<div class="row justify-content-start" style="margin-bottom: 10px;">
                             <div class="msg-other">
                             <b>${msg['username']}</b><br>
@@ -555,19 +562,3 @@ function onResize() {
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.globalAlpha = 1;
 }
-
-// Reload and Exit
-// $(window).on('beforeunload', function() {
-//     window.location.href = '/../../leave_room/' + roomCode;
-//     return 'Not an empty string';
-// });
-
-// window.addEventListener('beforeunload', function(e) {
-//     if(true) {
-//       //following two lines will cause the browser to ask the user if they
-//       //want to leave. The text of this dialog is controlled by the browser.
-//       leaveRoom.click()
-//       e.returnValue = 'You will be sent to Menu'; //required for Chrome
-//     }
-//     //else: user is allowed to leave without a warning dialog
-// }); 

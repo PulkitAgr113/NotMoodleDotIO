@@ -11,6 +11,7 @@ import os
 import random
 import json
 
+# Public Room Creation
 def main_view_0(request):
     user = request.user
     room_id = generateRoomCode()
@@ -20,6 +21,7 @@ def main_view_0(request):
     else:
         return redirect('/accounts/login')
 
+# Private Room Creation
 def main_view_1(request):
     user = request.user
     room_id = generateRoomCode()
@@ -228,10 +230,6 @@ def leave_room(request):
             data = make_data(room, True, True)
         else:
             data = make_data(room, True, False)
-        # print(list(room.rem_players.all()))
-        # print(list(room.done_players.all()))
-        # if(len(room.rem_players.all()) + len(room.rem_players.all()) == 0):
-        #     room.delete()
         
 
     return JsonResponse(data)
@@ -256,7 +254,6 @@ def update_player(request):
     return JsonResponse(data)
 
 def update(room):
-    print('update')
     if room.current_player in room.rem_players.all():
         room.rem_players.remove(room.current_player)
         room.done_players.add(room.current_player)
