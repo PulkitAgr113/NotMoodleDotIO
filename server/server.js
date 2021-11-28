@@ -62,14 +62,6 @@ io.on('connection', socket=> {
     // Broadcast leave message .
     socket.on('disconnect',()=>{
         userName = socket.username
-        if(!usersInRoom.hasOwnProperty(room)) {
-            return
-        }
-        const index = usersInRoom[room].indexOf(userName);
-        if (index > -1) {
-            usersInRoom[room].splice(index, 1);
-        }
-        io.to(room).emit('roomdetails',usersInRoom[room])
         io.to(room).emit('leave', userName)
     })
 })

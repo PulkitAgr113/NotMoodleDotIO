@@ -8,7 +8,7 @@ const leaveRoom = document.getElementById('leave_room')
 const word = document.getElementById('word')
 const roundno = document.getElementById('roundno')
 const playerlist = document.getElementById('playerlist')
-const playerNames = document.getElementsByClassName('kickButtons btn-sm btn-danger')
+var playerNames = document.getElementsByClassName('kickButtons')
 
 const userName = document.getElementById('username').value
 const user = document.getElementById('user').value
@@ -52,8 +52,23 @@ if(startGame.value == "working") {
 //     window.location.reload() 
 // })
 
+// Leave room button
 leaveRoom.addEventListener('click',()=>{
-    window.location.href = '/../../leave_room/' + roomCode;
+    $.ajax({
+        type: "POST",
+        url: "../../leave_room/",
+        data:{
+            roomCode:roomCode, 
+            username:userName,
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        datatype:'json',
+        // success: function (data) {
+        //      socket.emit('update',data)
+        // },
+    });
+    sleep(1000)
+    window.location.href = '../../menu/';
 })
 
 // Timer
@@ -121,7 +136,9 @@ function sleep(milliseconds) {
 setInterval(function() { makeTimer(); }, 1000);
 
 socket.on('broadcastUpdates', update=>{
+    console.log('updated ...')
     currentPlayer = update['currentPlayer']
+    console.log(currentPlayer)
     if(user==currentPlayer) {
         word.innerHTML = '<h3>'+update['word']+'</h3>'
         messageInput.disabled = true ;
@@ -170,6 +187,15 @@ socket.on('broadcastUpdates', update=>{
         }
     
     }
+    if (update['canvasurl']=='none'){
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // context.globalAlpha = 0.5;
+        context.fillStyle = "rgba(200, 200, 200, 0.4)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.globalAlpha = 1;
+    }
+
+
     if (update['clearcanvas']) {
         context.clearRect(0, 0, canvas.width, canvas.height);
         // context.globalAlpha = 0.5;
@@ -187,8 +213,25 @@ socket.on('broadcastUpdates', update=>{
 
     if(update['started']==false && update['embryo']==false) {
         sleep(3000)
-        window.location.href = '/../../leave_room/' + roomCode;
+        $.ajax({
+            type: "POST",
+            url: "../../leave_room/",
+            data:{
+                roomCode:roomCode, 
+                username:userName,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            datatype:'json',
+            // success: function (data) {
+            //     // socket.emit('update',data)
+            // },
+        });
+        window.location.href = '../../menu/';
     } 
+    playerNames = document.getElementsByClassName('kickButtons')
+    for (var i = 0; i < playerNames.length; i++) {
+        playerNames[i].addEventListener('click', onKickVote);
+    }
 })
 
 const handleAlert = (msg, type) => {
@@ -208,10 +251,40 @@ socket.emit('joinDetails', {
 })
 
 socket.on('welcome', msg=>{
+    console.log(currentPlayer)
+    if(user==currentPlayer) {
+        $.ajax({
+            type: "POST",
+            url: "../../get_data/",
+            data:{
+                roomCode:roomCode, 
+                username:userName,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            datatype:'json',
+            success: function (data) {
+                socket.emit('update',data)
+            },
+        });
+    }
     // handleAlert(msg, 'primary')
 })
 
 socket.on('leave', msg=>{
+
+        $.ajax({
+            type: "POST",
+            url: "../../get_data/",
+            data:{
+                roomCode:roomCode, 
+                username:userName,
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+            },
+            datatype:'json',
+            success: function (data) {
+                socket.emit('update',data)
+            },
+        });
     // handleAlert(msg, 'danger')
 })
 
@@ -219,7 +292,21 @@ socket.on('kickVote', player=>{
     console.log("Kicking")
     console.log(player)
     if (player != userName) return
-    window.location.href = '/../../leave_room/' + roomCode;
+    $.ajax({
+        type: "POST",
+        url: "../../leave_room/",
+        data:{
+            roomCode:roomCode, 
+            username:userName,
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        datatype:'json',
+        success: function (data) {
+            socket.emit('update',data)
+        },
+    });
+    sleep(1000)
+    window.location.href = '../../menu/';
 })
 
 sendBtn.addEventListener('click',()=>{
@@ -316,15 +403,17 @@ for (var i = 0; i < playerNames.length; i++) {
 }
 
 function onKickVote(e) {
-    if ($(this).attr("id") == userName) return   
-    console.log($(this).attr("id")) 
     console.log(userName)
+    console.log($(this).attr('id'))
+    if ($(this).attr('id') == userName) return   
+     
+    
     $.ajax({
         type: "POST",
         url: "../../kick_vote/",
         data:{
             kicker: userName,
-            kicked: $(this).attr("id"),
+            kicked: $(this).attr('id'),
             room: roomCode,
             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
         },

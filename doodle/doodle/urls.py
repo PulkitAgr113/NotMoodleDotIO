@@ -33,7 +33,8 @@ urlpatterns = [
     path('kick_vote/', views.kick_vote, name='kickVote'),
     path('store_canvas/', views.store_canvas, name='storeCanvas'),
     path('start_game/', views.start_game, name='startGame'),
-    path('leave_room/<str:room_id>', views.leave_room, name='leaveRoom'),
+    path('leave_room/', views.leave_room, name='leaveRoom'),
     path('update_player/', views.update_player, name='updatePlayer'),
+    path('get_data/', views.get_data, name='getData'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

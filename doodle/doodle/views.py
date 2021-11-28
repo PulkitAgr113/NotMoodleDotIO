@@ -207,28 +207,34 @@ def start_game(request):
         
         return JsonResponse(data)
 
-def leave_room(request, room_id):
+def leave_room(request):
     user = request.user
-    if user.is_authenticated:
+    if request.method=='POST':
+        roomCode = request.POST.get('roomCode')
+        room = Room.objects.get(room_code=roomCode)
         user.user_score.kickers.clear()
-        room = Room.objects.get(room_code=room_id)
         if user in room.rem_players.all():
             room.rem_players.remove(user)
         if user in room.done_players.all():
             room.done_players.remove(user)
-        if user == room.current_player:
-            update(room)
+
         for player in room.done_players.all():
             player.user_score.kickers.remove(user)
         for player in room.rem_players.all():
             player.user_score.kickers.remove(user)
+
+        if user == room.current_player:
+            update(room)
+            data = make_data(room, True, True)
+        else:
+            data = make_data(room, True, False)
         # print(list(room.rem_players.all()))
         # print(list(room.done_players.all()))
         # if(len(room.rem_players.all()) + len(room.rem_players.all()) == 0):
         #     room.delete()
-        return redirect('/menu')
-    else:
-        return redirect('/accounts/login')
+        
+
+    return JsonResponse(data)
 
 def update_player(request):
 
@@ -280,10 +286,19 @@ def update(room):
         room.current_player = room.owner
     else:
         room.current_player = room.rem_players.all()[0]
+    print(room.current_player)
     room.guessed.add(room.current_player)
     room.startTime = timezone.now()
     room.save()
 
+def get_data(request):
+    if request.method=='POST':
+        roomCode = request.POST.get('roomCode')
+        room = Room.objects.get(room_code=roomCode)
+
+        data = make_data(room, True, False)
+
+    return JsonResponse(data)
 
 
 def make_data(room, embryo, clearCanvas):
@@ -314,6 +329,7 @@ def make_data(room, embryo, clearCanvas):
         'embryo' : embryo ,
         'votelist' : votelist ,
         'clearcanvas' : clearCanvas ,
+        'canvasurl' : room.canvas_data_url ,
     }
 
     return data
