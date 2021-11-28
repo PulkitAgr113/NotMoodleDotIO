@@ -163,7 +163,7 @@ def kick_vote(request):
 
         if user_kicker not in user_kicked.user_score.kickers.all():
             user_kicked.user_score.kickers.add(user_kicker)
-            if len(user_kicked.user_score.kickers.all()) >= (len(room.done_players.all()) + len(room.rem_players.all()) - 1)//2:
+            if len(user_kicked.user_score.kickers.all()) > (len(room.done_players.all()) + len(room.rem_players.all()) - 1)//2:
                 data['to_kick'] = kicked
                 user_kicked.user_score.kickers.clear()
             data['vote_valid'] = True
