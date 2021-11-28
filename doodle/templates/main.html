@@ -16,12 +16,12 @@ main page
 
     <div class= "col align-self-end top-right" 
     style="position: absolute; right: 0; top: 0; color: white; text-align:right;
-    font-family: 'Supernatural Knight', sans-serif;
     margin-top: 10px;
     margin-right: 10px;"
     > 
-      <h2>{{loggedin.username}}</h2>
-      <button class="btn btn-primary mt-2" id = "leave_room">Leave Room</button><br>
+      <p style="font-family: 'Supernatural Knight', sans-serif; font-size: 40px;">{{loggedin}}
+      <button id="leave_room" class="btn btn-danger"><i class="fa fa-home"></i></button>
+      </p>
     </div>
 
     <div class="row h-20 justify-content-center">
@@ -62,35 +62,70 @@ main page
                 {% endfor %}
                 {% endif %}
             </h3></div>
+
+            <div class="row">
+                <div class="col-5">
+                    <p style="font-size: 25px; color:white"> Players </p>
+                </div>
+                <div class="col-2">
+                    <p style="font-size: 25px; color: white"> Score </p>
+                    
+                </div>
+                <div class="col-5">
+                    <p style="font-size: 25px; color: white"> Votekick
+                    </p>
+                </div>
+            </div>
             
-            <div class="card" id="playerlist">
+            <div class="row" id="playerlist">
+                
+
                 {% for player in room.done_players.all %}
-                    <div class = "player-container playerclick">
-                        {{player.kickers.all|length}}
-                        {% if player == curr %}
-                            <b style="color:blueviolet"> {{player.username}} </b>
-                        {% else %}
-                            <b> {{player.username}} </b>
-                        {% endif %}
-                        {{player.user_score.score}}
-                        {% if player.username != loggedin.username %}
-                            <button class="kickButtons" id="{{player.username}}">Kick</button>
-                        {% endif %}
-                    </div>
+                    <!-- <div class = "player-container playerclick"> -->
+                        <div class="col-5">
+                            {% if player == curr %}
+                                <p style="font-size: 25px; color:red"> {{player.username}} </p>
+                            {% else %}
+                                <p style="font-size: 25px; color: white"> {{player.username}} </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-2">
+                            <p style="font-size: 25px; color: white"> {{player.user_score.score}} </p>
+                            
+                        </div>
+                        <div class="col-5">
+                            <p style="font-size: 25px; color: white"> {{player.user_score.kickers.all|length}} &nbsp;
+                            
+                            {% if player.username != loggedin.username %}
+                                <button class="kickButtons btn-sm btn-danger" id="{{player.username}}"><i class="fa fa-window-close" aria-hidden="true"></i></button>
+                            {% endif %}
+                            </p>
+                        </div>
+                        
+                    <!-- </div> -->
                 {% endfor %}
                 {% for player in room.rem_players.all %}
-                    <div class = "player-container playerclick">
-                        {{player.kickers.all|length}}
-                        {% if player == curr %}
-                            <b style="color:blueviolet"> {{player.username}} </b>
-                        {% else %}
-                            <b> {{player.username}} </b>
-                        {% endif %}
-                        {{player.user_score.score}}
-                        {% if player.username != loggedin.username %}
-                            <button class="kickButtons" id="{{player.username}}">Kick</button>
-                        {% endif %}
-                    </div>
+                    <!-- <div class = "player-container playerclick"> -->
+                        <div class="col-5">
+                            {% if player == curr %}
+                                <p style="font-size: 25px; color:red"> {{player.username}} </p>
+                            {% else %}
+                                <p style="font-size: 25px; color: white"> {{player.username}} </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-2">
+                            <p style="font-size: 25px; color: white"> {{player.user_score.score}} </p>
+                            
+                        </div>
+                        <div class="col-5">
+                            <p style="font-size: 25px; color: white"> {{player.user_score.kickers.all|length}} &nbsp;
+                            &nbsp;
+                            {% if player.username != loggedin.username %}
+                                <button class="kickButtons btn-sm btn-danger" id="{{player.username}}"><i class="fa fa-window-close" aria-hidden="true"></i></button>
+                            {% endif %}
+                            </p>
+                        </div>
+                    <!-- </div> -->
                 {% endfor %}
             </div>
             <div id="alert-box"></div>

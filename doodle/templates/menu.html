@@ -6,27 +6,25 @@
 
     <div class= "col align-self-end top-right" 
     style="position: absolute; right: 0; top: 0; color: white; text-align:right;
-    font-family: 'Supernatural Knight', sans-serif;
     margin-top: 10px;"
     > 
-      <h2>{{username}}</h2>
-      <br>
-      <a href = "{% url 'logout' %}"><button class="btn btn-warning btn-lg">Logout</button></a>
-      <br>
+      <p style="font-family: 'Supernatural Knight', sans-serif; font-size: 40px;">{{username}}
+      <a href = "{% url 'logout' %}"><button class="btn btn-danger btn-lg"><i class="fa fa-sign-out"></i></button></a>
+      </p>
     </div>
 
     <div style=" font-family: 'monaco', monospace; text-align: center;">
-      <br>
-      
-      <a href="{% url 'main1' %}" class="themed-button">
-        <span class="inactive">Create Private Game</span>
-        <span class="active">&lt Create Private Game &gt</span>
-      </a>
       <br>
       <br>
       <a href="{% url 'main0' %}" class="themed-button">
         <span class="inactive">Create Public Game</span>
         <span class="active">&lt Create Public Game &gt</span>
+      </a>
+      <br>
+      <br>
+      <a href="{% url 'main1' %}" class="themed-button">
+        <span class="inactive">Create Private Game</span>
+        <span class="active">&lt Create Private Game &gt</span>
       </a>
       <br>
       <br>
@@ -41,7 +39,7 @@
           class="themed-input" 
           style="text-align: center; font-family: 'Supernatural Knight', sans-serif; color: white; border-bottom: 1px solid white ; font-size: 30px;" 
           placeholder="RoomCode"
-          size="9"
+          size="10"
           
           >
         <label for="roomcode"></label>
@@ -54,47 +52,77 @@
     </div>
 
     <div class="row">
-      <div class="col">
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+
+    <div class="row">
+      
+      <div class="col-1"></div>
+      <div class="col-3">
         <br>
-        <h3 style = "color: lightgreen;">High Scores:</h3>
-        {% for user,score in nonadmin %}
-          <h5 style="font-family: 'Supernatural Knight', sans-serif; color: white;">{{user}} <b>--</b> {{score}}</h5>
-        {% endfor %}
-      </div>
-      <div class="col">
-        <br>
-        <h3>Admins:</h3>
-        {% for user in admin %}
-            <h5 style="font-family: 'Supernatural Knight', sans-serif; color: white;">{{user}}</h5>
-        {% endfor %}
-      </div>
-      <div class="col">
-        <br>
-        <h3> Public Rooms: </h3>
+        <h3 style = "font-family: 'monaco',monospace; color: white; font-size: 30px;"> Public Rooms </h3>
         {% for codes in codelist %}
           {% if codes.room_type == "public" %}
             {% if codes.owner == loggedin %}
-              <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} </button>
-              <button class = "btn btn-danger mt-2 delete" value="{{codes}}">Delete Room</button>
+              <button class="btn btn-success mt-2 public" style=" background-color: rgba(255, 255, 255, 0.2); border: none;" value="{{codes}}"> {{codes}} </button>
+              <button class = "btn btn-danger mt-2 delete" value="{{codes}}"><i class="fa fa-trash"></i></button>
             {% else %}
-              <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} - {{codes.owner.username}} </button>
+              <button class="btn btn-success mt-2 public" style="background-color: rgba(255, 255, 255, 0.2); border: none;" value="{{codes}}">
+                 {{codes}} 
+                 - {{codes.owner.username}}
+              </button>
             {% endif %}
             <br>
           {% endif %}
         {% endfor %}
+
+        <br>
       </div>
-      <div class="col">
+
+      <div class="col-4" style="">
+        <h2 style = "font-family: 'monaco',monospace; color: white; font-size: 45px; text-align: center;">
+          Leaderboard
+        </h2>
         <br>
-        <h3> Your Rooms: </h3>
+        {% for user,score in nonadmin %}
+          <div class="row" style="">
+            <div class="col-1"></div>
+            <div class="col-7" style="font-family: 'monaco',monospace; color: white; font-size: 25px;">
+              {{user}}
+            </div>
+            <div class="col-3" style="font-family: 'monaco',monospace; color: white; text-align: right; font-size: 25px;">
+              {{score}}
+            </div> 
+            <div class="col-1"></div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="col-1"></div>
+      <div class="col-3">
         <br>
+        <h3 style = "font-family: 'monaco',monospace; color: white; font-size: 30px;"> Private Rooms</h3>
         {% for codes in codelist %}
           {% if codes.room_type == "private" and codes.owner == loggedin%}
-            <button class="btn btn-success mt-2 public" value="{{codes}}"> {{codes}} </button>
-            <button class = "btn btn-danger mt-2 delete" value="{{codes}}">Delete Room</button>
+            <button class="btn btn-success mt-2 public" style="background-color: rgba(255, 255, 255, 0.2); border: none;" value="{{codes}}"> {{codes}} </button>
+            <button class = "btn btn-danger mt-2 delete" value="{{codes}}"><i class="fa fa-trash"></i></button>
             <br>
           {% endif %}
         {% endfor %}
+        <br>
+        <!-- <h2 style = "font-family: 'monaco',monospace; color: white; font-size: 30px;">
+          Admins
+        </h2>
+        <br>
+        {% for user in admin %}
+            <h5 style="font-family: 'monaco',monospace; color: white;">{{user}}</h5>
+        {% endfor %} -->
       </div>
+
     </div>
 
 

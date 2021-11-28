@@ -8,7 +8,7 @@ const leaveRoom = document.getElementById('leave_room')
 const word = document.getElementById('word')
 const roundno = document.getElementById('roundno')
 const playerlist = document.getElementById('playerlist')
-const playerNames = document.getElementsByClassName('kickButtons')
+const playerNames = document.getElementsByClassName('kickButtons btn-sm btn-danger')
 
 const userName = document.getElementById('username').value
 const user = document.getElementById('user').value
@@ -41,16 +41,16 @@ if(startGame.value == "working") {
                 'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
             },
             datatype:'json',
-            success: function () {
-                socket.emit('startgame')
+            success: function (data) {
+                socket.emit('update',data)
             },
         });
     })
 }
 
-socket.on('startgame', msg=>{
-    window.location.reload() 
-})
+// socket.on('startgame', msg=>{
+//     window.location.reload() 
+// })
 
 leaveRoom.addEventListener('click',()=>{
     window.location.href = '/../../leave_room/' + roomCode;
@@ -108,6 +108,15 @@ function makeTimer() {
         $("#time").html("<h4>Time Left<br><h2> " + seconds + "s</h2> </h4>");
     } 
 }
+
+
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
         
 setInterval(function() { makeTimer(); }, 1000);
 
@@ -134,18 +143,50 @@ socket.on('broadcastUpdates', update=>{
     
     playerlist.innerHTML = '' 
     for(player in update['playerlist']) {
-        playerlist.innerHTML += player ;
-        playerlist.innerHTML += update['playerlist'][player] ;
-        playerlist.innerHTML += '<br>' ;
+        if(player == currentPlayer) {
+            playerlist.innerHTML += `<div class="col-5"><p style="font-size: 25px; color:red"> ${player} </p></div>`
+        }
+        else {
+            playerlist.innerHTML += `<div class="col-5"><p style="font-size: 25px; color:white"> ${player} </p></div>`
+        }
+        playerlist.innerHTML += `
+        <div class="col-2">
+            <p style="font-size: 25px; color: white"> ${update['playerlist'][player]} </p>
+            
+        </div>
+        
+        `
+
+        if(player != userName) {
+            playerlist.innerHTML += `<div class="col-5">
+            <p style="font-size: 25px; color: white"> ${update['votelist'][player]} &nbsp;
+            <button class="kickButtons btn-sm btn-danger" id="${player}"><i class="fa fa-window-close" aria-hidden="true"></i></button>
+            </p></div>`
+        }
+        else {
+            playerlist.innerHTML += `<div class="col-5">
+            <p style="font-size: 25px; color: white"> ${update['votelist'][player]}
+            </p></div>`
+        }
+    
     }
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    // context.globalAlpha = 0.5;
-    context.fillStyle = "rgba(200, 200, 200, 0.4)";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    context.globalAlpha = 1;
+    if (update['clearcanvas']) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // context.globalAlpha = 0.5;
+        context.fillStyle = "rgba(200, 200, 200, 0.4)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.globalAlpha = 1;
+    }
 
+    if(update['started']==true) {
+        started = "True"
+        startGame.value = "over"
+        startGame.className = "btn btn-secondary mt-2"
+        document.getElementById('startTime').value = update['startTime']
+    }
 
-    if(update['started']==false) {
+    if(update['started']==false && update['embryo']==false) {
+        sleep(3000)
         window.location.href = '/../../leave_room/' + roomCode;
     } 
 })
@@ -202,6 +243,7 @@ sendBtn.addEventListener('click',()=>{
             if(data['guess']) {
                 message = '**correct**'  
                 messageInput.disabled = true;
+                socket.emit('update',data)
             }
 
             msg = {
@@ -274,18 +316,21 @@ for (var i = 0; i < playerNames.length; i++) {
 }
 
 function onKickVote(e) {
-    if (e.target.id == userName) return    
+    if ($(this).attr("id") == userName) return   
+    console.log($(this).attr("id")) 
+    console.log(userName)
     $.ajax({
         type: "POST",
         url: "../../kick_vote/",
         data:{
             kicker: userName,
-            kicked: e.target.id,
+            kicked: $(this).attr("id"),
             room: roomCode,
             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
         },
         datatype: 'json',
         success: function (data) {
+            socket.emit('update',data)
             if (data['to_kick'] != null) {
                 socket.emit('kickPlayer', data['to_kick'])
             }
@@ -436,4 +481,4 @@ function onResize() {
 //       e.returnValue = 'You will be sent to Menu'; //required for Chrome
 //     }
 //     //else: user is allowed to leave without a warning dialog
-// });
+// }); 

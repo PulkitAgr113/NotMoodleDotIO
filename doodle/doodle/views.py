@@ -146,6 +146,9 @@ def store_msg(request):
                 data['guess'] = True
             else:
                 ChatMessage.objects.create(room=room,text=message,author=author)
+
+        data = data | make_data(room, True, False)
+
     return JsonResponse(data)
 
 def kick_vote(request):
@@ -163,10 +166,13 @@ def kick_vote(request):
 
         if user_kicker not in user_kicked.user_score.kickers.all():
             user_kicked.user_score.kickers.add(user_kicker)
-            if len(user_kicked.user_score.kickers.all()) > (len(room.done_players.all()) + len(room.rem_players.all()) - 1)//2:
+            if len(user_kicked.user_score.kickers.all()) > (len(room.done_players.all()) + len(room.rem_players.all()))//2:
                 data['to_kick'] = kicked
                 user_kicked.user_score.kickers.clear()
             data['vote_valid'] = True
+
+        data = data | make_data(room, True, False)
+
     return JsonResponse(data)
 
 # Store canvas in database
@@ -197,7 +203,8 @@ def start_game(request):
         room.startTime = timezone.now()
         room.save()
 
-        data = {}
+        data = make_data(room, True, True)
+        
         return JsonResponse(data)
 
 def leave_room(request, room_id):
@@ -211,6 +218,10 @@ def leave_room(request, room_id):
             room.done_players.remove(user)
         if user == room.current_player:
             update(room)
+        for player in room.done_players.all():
+            player.user_score.kickers.remove(user)
+        for player in room.rem_players.all():
+            player.user_score.kickers.remove(user)
         # print(list(room.rem_players.all()))
         # print(list(room.done_players.all()))
         # if(len(room.rem_players.all()) + len(room.rem_players.all()) == 0):
@@ -232,24 +243,10 @@ def update_player(request):
         if user == room.current_player:
             update(room)
 
+        print('update room done')
 
-    playerlist = {}
+        data = make_data(room, False, True)
 
-    for player in room.rem_players.all():
-        playerlist[player.username] =  player.user_score.score
-
-    for player in room.done_players.all():
-        playerlist[player.username] =  player.user_score.score
-
-    data = {
-        'startTime' : room.startTime ,
-        'currentPlayer' : room.current_player.username ,
-        'word' : room.word ,
-        'roundNo' : room.round_no ,
-        'playerlist' : playerlist ,
-        'bool' : True ,
-        'started' : room.started
-    }
     return JsonResponse(data)
 
 def update(room):
@@ -286,3 +283,37 @@ def update(room):
     room.guessed.add(room.current_player)
     room.startTime = timezone.now()
     room.save()
+
+
+
+def make_data(room, embryo, clearCanvas):
+    playerlist = {}
+
+    for player in room.rem_players.all():
+        playerlist[player.username] =  player.user_score.score
+
+    for player in room.done_players.all():
+        playerlist[player.username] =  player.user_score.score
+
+    votelist = {}
+
+    for player in room.rem_players.all():
+        votelist[player.username] =  len(player.user_score.kickers.all())
+
+    for player in room.done_players.all():
+        votelist[player.username] =  len(player.user_score.kickers.all())
+
+    data = {
+        'startTime' : json.dumps(room.startTime.isoformat()) ,
+        'currentPlayer' : room.current_player.username ,
+        'word' : room.word ,
+        'roundNo' : room.round_no ,
+        'playerlist' : playerlist ,
+        'bool' : True ,
+        'started' : room.started ,
+        'embryo' : embryo ,
+        'votelist' : votelist ,
+        'clearcanvas' : clearCanvas ,
+    }
+
+    return data
