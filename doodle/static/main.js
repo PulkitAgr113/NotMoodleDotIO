@@ -90,7 +90,20 @@ function makeTimer() {
         var minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
         var seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
 
-        if(seconds<=30) {
+        if(seconds>30) {
+            if(currentPlayer != user) {
+                hidden_word = ''
+                for (var i=0; i<word.value.length; i++) {
+                    if(word.value.charAt(i)!=' ') {
+                        hidden_word += '*'
+                    }
+                    else hidden_word += ' '
+                } 
+
+                word.innerHTML = '<h3>'+hidden_word+'</h3>' 
+            }
+        }
+         else if(seconds<=30) {
             if(currentPlayer != user) {
                 hidden_word = ''
                 for (var i=0; i<word.value.length; i++) {
